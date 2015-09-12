@@ -21,3 +21,24 @@ To develop for this project, you will need `node`, `grunt`, and `bower`. Downloa
 
 Then use this on the command line for node package manager (npm) to install bower and grunt: `npm install -g bower grunt-cli`
 
+##Installation
+
+In the project directory, execute `install.sh` or `install.bat` depending on your operating system.
+This will create a Python virtual environment called *venv*. This step only needs to be
+performed once.
+
+##Running the Application
+
+Activate virtual environment by executing the Linux command:
+
+    source venv/bin/activate
+
+or the Windows command:
+
+    venv\bin\activate
+
+Start the application with the command:
+
+    python run.py
+
+The application will now appear at [http://localhost:5000](http://localhost:5000).
