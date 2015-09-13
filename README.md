@@ -23,9 +23,19 @@ Then use this on the command line for node package manager (npm) to install bowe
 
 ##Installation
 
-In the project directory, execute `install.sh` or `install.bat` depending on your operating system.
-This will create a Python virtual environment called *venv*. This step only needs to be
+In the project directory, execute `install.sh` or `install.bat` depending on your operating system. This step only needs to be
 performed once.
+
+This will do two things. First it will create a Python virtual environment called *venv* and install a version of Python in it.
+
+The second thing will be to run `bower install` which will install a folder `app/static/lib` full of Javascript third-party dependencies.
+
+Avoid committing the two above directories, which are created by this process. Open `CREM/.git/info/include` which determines which files Git will ignore. Paste in this pattern:
+
+```app/static/lib/
+venv/```
+
+We won't change the contents of third-party dependencies; instead we will only edit `bower.json` which determines which versions of dependencies we will use, managed by Bower.
 
 ##Running the Application
 
@@ -42,3 +52,5 @@ Start the application with the command:
     python run.py
 
 The application will now appear at [http://localhost:5000](http://localhost:5000).
+
+
