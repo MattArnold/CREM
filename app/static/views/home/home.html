@@ -1,12 +1,6 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8">
-            <h1>Welcome to CREM!</h1>
-            <p class="lead">This is your homepage, ready for editing</p>
-
-            <p>
-             <span translate="main.like">If you like this Angular-Flask generator, please give us a star at </span>&nbsp;<a href="https://github.com/rayokota/generator-angular-flask" target="_blank" translate="main.github">Github</a>!
-            </p>
-        </div>
+    <div ng-repeat="event in events | orderBy:'track'" class="row">
+    	<h3>{{event.track}} Track: {{event.title}}</h3>
+    	<div>{{event.room}}, {{event.time}}. Program Participants: <span ng-repeat="presenter in event.presenters">{{presenter}}{{$last ? '' : ', '}}</span>. {{event.description}}</div>
     </div>
 </div>
