@@ -58,6 +58,13 @@ database with the command:
 
     python db_create.py
 
+## Adding Test Data
+
+Activate the virtual environment as described above. Then add test data
+to the database with the command:
+
+    python add_testdata.py
+
 ##Running the Application
 
 Activate the virtual environment as described above. Then start the
