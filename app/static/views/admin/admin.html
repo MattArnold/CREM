@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CREM</title>
+  <title>CREM Admin</title>
   <link href="lib/bootstrap-css/css/bootstrap.css" rel="stylesheet">
   <link href="lib/jquery-ui/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
   <link href="css/app.css" rel="stylesheet">
@@ -19,31 +19,12 @@
          <span class="icon-bar"></span>
          <span class="icon-bar"></span>
        </button>
-       <a class="navbar-brand" href="#">CREM: Convention Resource Event Management</a>
+       <a class="navbar-brand" href="#">CREM Admin</a>
      </div>
 
      <!-- Collect the nav links, forms, and other content for toggling -->
-     <!-- TODO: AJAXify this hard-coded data -->
-     <div class="collapse navbar-collapse navbar-ex1-collapse"
-       ng-init="tracks = [
-         {name:'Literature',path:'literature'},
-         {name:'Tech',path:'tech'},
-         {name:'AfterDark',path:'afterdark'},
-         {name:'ActionAdventure',path:'actionadventure'},
-         {name:'Costuming',path:'costuming'},
-         {name:'WebComics',path:'webcomics'},
-         {name:'Gaming',path:'gaming'},
-         {name:'D.I.Y.',path:'diy'},
-         {name:'Film',path:'film'},
-         {name:'Food',path:'food'},
-         {name:'VideoGaming',path:'videogaming'},
-         {name:'Science',path:'science'},
-         {name:'Eco',path:'eco'}
-       ]"
-     >
+     <div class="collapse navbar-collapse navbar-ex1-collapse">
        <ul class="nav navbar-nav">
-        <li><a href="#/admin">Admin</a></li>
-        <li ng-repeat="item in tracks"><a href="/{{item.path}}">{{item.name}}</a></li>
        </ul>
      </div>
      <!-- /.navbar-collapse -->

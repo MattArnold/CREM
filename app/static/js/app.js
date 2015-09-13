@@ -3,7 +3,10 @@ angular.module('CREM', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/home/home.html', 
+        templateUrl: 'views/home/home.html',
         controller: 'HomeController'})
+      .when('/admin', {
+        templateUrl: 'views/home/admin.html',
+        controller: 'AdminController'})
       .otherwise({redirectTo: '/'});
   }]);
