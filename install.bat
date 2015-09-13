@@ -11,3 +11,4 @@ venv\Scripts\pip install flask-wtf==0.8.4
 venv\Scripts\pip install pytz==2013b
 venv\Scripts\pip install flask-babel==0.8
 venv\Scripts\pip install flup
+bower install
