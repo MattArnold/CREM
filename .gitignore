@@ -1,5 +1,6 @@
 venv/*
 app/static/lib/*
+config.py
 
 .DS_Store
 *.db
