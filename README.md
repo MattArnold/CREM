@@ -39,17 +39,29 @@ venv/
 
 We won't change the contents of third-party dependencies; instead we will only edit `bower.json` which determines which versions of dependencies we will use, managed by Bower.
 
-##Running the Application
+## Activating the Virtual Environment
 
-Activate virtual environment by executing the Linux command:
+The steps below require that you activate the virtual environment.
+
+In Linux, activate the virtual environment with the command:
 
     source venv/bin/activate
 
-or the Windows command:
+In Windows, activate the virtual environment with the command:
 
     venv\bin\activate
 
-Start the application with the command:
+## Creating the Database
+
+Activate the virtual environment as described above. Then create the
+database with the command:
+
+    python db_create.py
+
+##Running the Application
+
+Activate the virtual environment as described above. Then start the
+application with the command:
 
     python run.py
 
