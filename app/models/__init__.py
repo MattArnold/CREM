@@ -68,33 +68,19 @@ room_availability = db.Table(
 )
 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String())
-    first_name = db.Column(db.String())
-    last_name = db.Column(db.String())
-    superuser = db.Column(db.Boolean())
-
-    def __init__(self):
-        if User.query.count() == 0:
-            self.superuser = True
-        else:
-            self.superuser = False
-
-    def __repr__(self):
-        return self.email
-
-
 class Track(db.Model):
     __tablename__ = 'track'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), unique=True)
-    path = db.Column(db.String(), unique=True)
-    staffId = db.Column(db.Integer())
+    uid = db.Column(db.String(), unique=True)
+    email = db.Column(db.String(), unique=True)
+    trackhead_first_name = db.Column(db.String())
+    trackhead_last_name = db.Column(db.String())
 
-    def __init__(self, name, staffId):
+    def __init__(self, name, email):
         self.name = name
-        self.staffId = staffId
+        self.email = email
+        self.uid = email[:email.find('@')]
 
     def __repr__(self):
         return 'Track: %s' % self.name
@@ -106,8 +92,6 @@ class Event(db.Model):
     title = db.Column(db.String())
     description = db.Column(db.String())
     comments = db.Column(db.String())
-    submitter_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    submitter = db.relationship('User')
     track_id = db.Column(db.Integer(), db.ForeignKey('track.id'))
     track = db.relationship('Track')
     rooms = db.relationship('Room',
@@ -145,7 +129,7 @@ class Presenter(db.Model):
     phone = db.Column(db.String())
     presentations = db.relationship(
         'Event',
-        secondary='presenter_presenting_in',
+        secondary=presenter_event,
         backref=db.backref('presented_by', passive_deletes=True)
     )
 
@@ -178,11 +162,11 @@ class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     room_name = db.Column(db.String(50))
     room_group_id = db.Column(db.Integer, db.ForeignKey('room_group.id'))
-    room_group = db.relationship('RoomGroups', backref='rooms')
+    room_group = db.relationship('RoomGroup', backref='rooms')
     convention_id = db.Column(db.Integer, db.ForeignKey('convention.id'))
     convention = db.relationship('Convention', backref='rooms')
     suitable_events = db.relationship(
-        'Events',
+        'Event',
         secondary=room_suitability,
         backref=db.backref('suitable_rooms'),
         passive_deletes=True
