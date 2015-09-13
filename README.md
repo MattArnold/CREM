@@ -32,8 +32,10 @@ The second thing will be to run `bower install` which will install a folder `app
 
 Avoid committing the two above directories, which are created by this process. Open `CREM/.git/info/include` which determines which files Git will ignore. Paste in this pattern:
 
-```app/static/lib/
-venv/```
+```
+app/static/lib/
+venv/
+```
 
 We won't change the contents of third-party dependencies; instead we will only edit `bower.json` which determines which versions of dependencies we will use, managed by Bower.
 
