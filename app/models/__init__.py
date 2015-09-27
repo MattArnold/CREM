@@ -86,6 +86,21 @@ class Track(db.Model):
     def __repr__(self):
         return 'Track: %s' % self.name
 
+    @property
+    def names(self):
+       """Return only the names of the tracks"""
+       return {
+           'name' : self.name
+       }
+
+    #The only reason CREM keeps staff email addresses in the
+    #database is so CREM can send emails. We will not
+    #include staff email addresses in any AJAX endpoints
+    #because all our staff understand each email
+    #begins with a track name, so they know how to contact
+    #each other already. Users = tracks = email addresses.
+    #If we expose them through an endpoint, the only value
+    #we provide would be for spam spiders to collect them.
 
 class Event(db.Model):
     __tablename__ = 'event'
