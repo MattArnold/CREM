@@ -76,6 +76,7 @@ class Track(db.Model):
     email = db.Column(db.String(), unique=True)
     trackhead_first_name = db.Column(db.String())
     trackhead_last_name = db.Column(db.String())
+    active = db.Column(db.Boolean(), default=True)
 
     def __init__(self, name, email):
         self.name = name
@@ -92,6 +93,7 @@ class Event(db.Model):
     title = db.Column(db.String())
     description = db.Column(db.String())
     comments = db.Column(db.String())
+    active = db.Column(db.Boolean(), default=True)
     track_id = db.Column(db.Integer(), db.ForeignKey('track.id'))
     track = db.relationship('Track')
     rooms = db.relationship('Room',
@@ -127,6 +129,7 @@ class Presenter(db.Model):
     first_name = db.Column(db.String())
     last_name = db.Column(db.String())
     phone = db.Column(db.String())
+    active = db.Column(db.Boolean(), default=True)
     presentations = db.relationship(
         'Event',
         secondary=presenter_event,
@@ -147,6 +150,7 @@ class Resource(db.Model):
     name = db.Column(db.String(), unique=True)
     request_form_label = db.Column(db.String())
     displayed_on_requst_form = db.Column(db.Boolean())
+    active = db.Column(db.Boolean(), default=True)
 
     def __init__(self, name, request_form_label, displayed_on_requst_form):
         self.name = name
@@ -165,6 +169,7 @@ class Room(db.Model):
     room_group = db.relationship('RoomGroup', backref='rooms')
     convention_id = db.Column(db.Integer, db.ForeignKey('convention.id'))
     convention = db.relationship('Convention', backref='rooms')
+    active = db.Column(db.Boolean(), default=True)
     suitable_events = db.relationship(
         'Event',
         secondary=room_suitability,
@@ -203,6 +208,7 @@ class Convention(db.Model):
     end_dt = db.Column(db.DateTime)
     url = db.Column(db.String())
     timeslot_duration = db.Column(db.Interval())
+    active = db.Column(db.Boolean(), default=True)
 
     def __repr__(self):
         return self.name
@@ -219,3 +225,4 @@ class Timeslot(db.Model):
                                  backref=db.backref('timeslots'))
     start_dt = db.Column(db.DateTime())
     rsvp_conflicts = db.Column(db.Integer())
+    active = db.Column(db.Boolean(), default=True)
