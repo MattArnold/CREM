@@ -99,7 +99,7 @@ class Event(db.Model):
     rooms = db.relationship('Room',
                             secondary='room_event',
                             backref=db.backref('used_for_event'))
-    eventType = db.Column(db.String(20))
+    eventtype_id = db.Column(db.Integer, db.ForeignKey('eventtype.id'))
     resources = db.relationship('Resource',
                                 secondary=event_resources,
                                 backref=db.backref('at_event'))
@@ -121,6 +121,14 @@ class Event(db.Model):
 
     def __repr__(self):
         return 'Event: %s' % self.title
+
+
+class EventType(db.Model):
+    __tablename__ = 'eventtype'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+    active = db.Column(db.Boolean(), default=True)
+    events = db.relationship('Event', backref='event_type')
 
 
 class Presenter(db.Model):
