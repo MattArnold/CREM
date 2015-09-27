@@ -5,6 +5,12 @@ Inserts test data into the CREM database.
 from app import db
 from app.models import Track
 
+# Delete all exsiting Tracks.
+events = Track.query.all()
+for event in events:
+    db.session.delete(event)
+db.session.commit()
+
 # Add tracks.
 
 track_infos = (
