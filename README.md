@@ -58,6 +58,8 @@ database with the command:
 
     python db_create.py
 
+If you have already previously run this command, you will see the file `app.db`.
+
 ## Adding Test Data
 
 Activate the virtual environment as described above. Then add test data
