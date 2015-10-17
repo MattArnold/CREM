@@ -1,5 +1,15 @@
 angular.module('CREM')
-  .controller('HomeController', ['$scope', function ($scope) {
+  .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
+    var responsePromise = $http.get('/tracks.json');
+
+    responsePromise.success(function(data) {
+      $scope.tracks = data.tracknames;
+    });
+
+    responsePromise.error(function() {
+      $scope.tracks = [{ 'name': 'No Tracks Found' }];
+    });
+
   	// TODO: AJAXify this hard-coded data
   	$scope.events = [
   		{

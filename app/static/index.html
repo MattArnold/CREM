@@ -9,7 +9,7 @@
   <link href="lib/jquery-ui/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
   <link href="css/app.css" rel="stylesheet">
 </head>
-<body>
+<body ng-controller="HomeController">
  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
    <div class="container">
      <div class="navbar-header">
@@ -23,27 +23,10 @@
      </div>
 
      <!-- Collect the nav links, forms, and other content for toggling -->
-     <!-- TODO: AJAXify this hard-coded data -->
-     <div class="collapse navbar-collapse navbar-ex1-collapse"
-       ng-init="tracks = [
-         {name:'Literature',path:'literature'},
-         {name:'Tech',path:'tech'},
-         {name:'AfterDark',path:'afterdark'},
-         {name:'ActionAdventure',path:'actionadventure'},
-         {name:'Costuming',path:'costuming'},
-         {name:'WebComics',path:'webcomics'},
-         {name:'Gaming',path:'gaming'},
-         {name:'D.I.Y.',path:'diy'},
-         {name:'Film',path:'film'},
-         {name:'Food',path:'food'},
-         {name:'VideoGaming',path:'videogaming'},
-         {name:'Science',path:'science'},
-         {name:'Eco',path:'eco'}
-       ]"
-     >
+     <div class="collapse navbar-collapse navbar-ex1-collapse">
        <ul class="nav navbar-nav">
-        <li><a href="#/admin">Admin</a></li>
-        <li ng-repeat="item in tracks"><a href="/{{item.path}}">{{item.name}}</a></li>
+        <li><a href="/#/admin">Admin</a></li>
+        <li ng-repeat="item in tracks"><a href="/#/{{item.path}}">{{item.name}}</a></li>
        </ul>
      </div>
      <!-- /.navbar-collapse -->
@@ -62,6 +45,5 @@
 
   <script src="js/app.js"></script>
   <script src="js/home/home-controller.js"></script>
-  
 </body>
 </html>
