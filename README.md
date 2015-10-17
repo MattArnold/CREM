@@ -65,7 +65,7 @@ If you have already previously run this command, you will see the file `app.db`.
 Activate the virtual environment as described above. Then add test data
 to the database with the command:
 
-    python add_testdata.py
+    python dev/add_testdata.py
 
 ##Running the Application
 
