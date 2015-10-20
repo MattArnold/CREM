@@ -21,18 +21,17 @@
        </button>
        <a class="navbar-brand" href="#">CREM: Convention Resource Event Management</a>
      </div>
-
-     <!-- Collect the nav links, forms, and other content for toggling -->
-     <div class="collapse navbar-collapse navbar-ex1-collapse">
-       <ul class="nav navbar-nav">
-        <li><a href="/#/admin">Admin</a></li>
-        <li ng-repeat="item in tracks"><a href="/#/{{item.path}}">{{item.name}}</a></li>
-       </ul>
-     </div>
-     <!-- /.navbar-collapse -->
    </div>
    <!-- /.container -->
   </nav>
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="container">
+   <ul class="pagination">
+    <li><a href="/#/admin">Admin</a></li>
+    <li ng-repeat="item in tracks"><a href="/#/{{item.path}}">{{item.name}}</a></li>
+   </ul>
+  </div>
+  <!-- /.navbar-collapse -->
   <div class="container" ng-view></div>
   <script src="lib/jquery/dist/jquery.js"></script>
   <script src="lib/jquery-ui/jquery-ui.js"></script>

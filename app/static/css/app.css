@@ -3,3 +3,26 @@ body {
   padding: 10px;
   background-color: #ECF0F1;
 }
+
+.odd {
+    background-color: #DDD;
+}
+
+.even {
+    background-color: #CCC;
+}
+
+.title {
+    font-weight: bold;
+}
+
+.cell {
+    border-top: solid;
+    border-top-width: 2px;
+    border-top-color: #BBB;
+    padding: 0.6rem;
+}
+
+.spancell {
+    z-index: -1;
+}

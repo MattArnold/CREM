@@ -1,6 +1,7 @@
 angular.module('CREM')
   .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
     var responsePromise = $http.get('/tracks.json');
+    $scope.filteredlist = [];
 
     responsePromise.success(function(data) {
       $scope.tracks = data.tracknames;
@@ -15,7 +16,8 @@ angular.module('CREM')
   		{
   			title: 'Example Title',
   			room: 'Windover',
-  			time: '7 pm',
+        day: 'Friday',
+        time: '7 pm',
   			track: 'Tech',
   			presenters: ['Susan Simmons', 'Robert Reed'],
   			description: 'Example of a hard-coded event. This is the description.'
@@ -23,6 +25,7 @@ angular.module('CREM')
   		{
   			title: 'Another Example Title',
   			room: 'Charlevoix A',
+        day: 'Saturday',
   			time: '7 pm',
   			track: 'Literature',
    			presenters: ['Norman Morgenstern', 'Roselyn R. Ferguson'],
@@ -31,6 +34,7 @@ angular.module('CREM')
   		{
   			title: 'A Food Example Title',
   			room: 'Charlevoix A',
+        day: 'Saturday',
   			time: '7 pm',
   			track: 'Food',
    			presenters: ['Norman Morgenstern', 'Roselyn R. Ferguson'],
@@ -39,6 +43,7 @@ angular.module('CREM')
   		{
   			title: 'A Literature Example Title',
   			room: 'Charlevoix A',
+        day: 'Sunday',
   			time: '7 pm',
   			track: 'Literature',
    			presenters: ['Norman Morgenstern', 'Roselyn R. Ferguson'],

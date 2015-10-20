@@ -1,6 +1,19 @@
 <div class="container-fluid">
+    <div class="row" style="margin-bottom: 1rem;">
+        <div class="col-md-4 hidden-sm hidden-xs h4 odd cell">Title</div>
+        <div class="col-md-1 hidden-sm hidden-xs h4 even cell">Track</div>
+        <div class="col-md-2 hidden-sm hidden-xs h4 odd cell">Start</div>
+        <div class="col-md-2 hidden-sm hidden-xs h4 even cell">Room</div>
+        <div class="col-md-3 hidden-sm hidden-xs h4 odd cell">Program Participant(s)</div>
+    </div>
     <div ng-repeat="event in events | orderBy:'track'" class="row">
-    	<h3>{{event.track}} Track: {{event.title}}</h3>
-    	<div>{{event.room}}, {{event.time}}. Program Participants: <span ng-repeat="presenter in event.presenters">{{presenter}}{{$last ? '' : ', '}}</span>. {{event.description}}</div>
+        <div class="col-md-4 col-sm-11 odd title cell">{{event.title}}</div>
+        <div class="col-md-1 col-sm-1 even cell">{{event.track}}</div>
+        <div class="col-md-2 col-sm-4 odd cell">{{event.day}} {{event.time}}</div>
+    	<div class="col-md-2 col-sm-4 even cell">{{event.room}}</div>
+        <div class="col-md-3 col-sm-4 odd cell">
+            <span ng-repeat="presenter in event.presenters">{{presenter}}{{$last ? '' : ', '}}</span>
+        </div>
+        <div class="col-md-12 odd spancell">{{event.description}}</div>
     </div>
 </div>
