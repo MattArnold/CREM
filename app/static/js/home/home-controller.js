@@ -11,6 +11,41 @@ angular.module('CREM')
       $scope.tracks = [{ 'name': 'No Tracks Found' }];
     });
 
+    $scope.columnnames = [
+      {
+        id: 'title',
+        name: 'Title'
+      },
+      {
+        id: 'track',
+        name: 'Track'
+      },
+      {
+        id: 'time',
+        name: 'Start'
+      },
+      {
+        id: 'duration',
+        name: 'Duration'
+      },
+      {
+        id: 'room',
+        name: 'Room'
+      },
+      {
+        id: 'type',
+        name: 'Type'
+      },
+      {
+        id: 'presenters',
+        name: 'Program Participants'
+      },
+      {
+        id: 'description',
+        name: 'Description'
+      }
+    ];
+
   	// TODO: AJAXify this hard-coded data
   	$scope.events = [
   		{
@@ -42,13 +77,40 @@ angular.module('CREM')
   		},
   		{
   			title: 'A Literature Example Title',
-  			room: 'Charlevoix A',
+  			room: 'Board of Directors',
         day: 'Sunday',
   			time: '7 pm',
   			track: 'Literature',
    			presenters: ['Norman Morgenstern', 'Roselyn R. Ferguson'],
  			description: 'Example of another hard-coded event. Grouped by track.'
-  		}
+  		},
+      {
+        title: 'A Deployment of Superpages',
+        room: 'Charlevoix C',
+        day: 'Friday',
+        time: '5 pm',
+        track: 'Tech',
+        presenters: ['Lewis K. Berry'],
+      description: 'Cache coherence must work. In fact, few cyberinformaticians would disagree with the analysis of voice-over-IP. AridPrawn, our new application for A* search, is the solution to all of these obstacles.'
+      },
+      {
+        title: 'A Pretend Game',
+        room: 'Lobby',
+        day: 'Saturday',
+        time: '11 am',
+        track: 'Gaming',
+        presenters: ['David Ross'],
+      description: 'A pretend game as an example event.'
+      },
+      {
+        title: 'E-Commerce Deployment',
+        room: 'Board of Governors',
+        day: 'Friday',
+        time: '9 pm',
+        track: 'Tech',
+        presenters: ['Paul Burtch'],
+      description: 'In recent years, much research has been devoted to the development of Internet QoS; unfortunately, few have harnessed the investigation of systems. Given the current status of amphibious algorithms, hackers worldwide compellingly desire the visualization of XML. DimVendue, our new methodology for scalable configurations, is the solution to all of these obstacles.'
+      }
    	];
   }
 ]);

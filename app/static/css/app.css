@@ -20,9 +20,45 @@ body {
     border-top: solid;
     border-top-width: 2px;
     border-top-color: #BBB;
-    padding: 0.6rem;
 }
 
 .spancell {
-    z-index: -1;
+
+}
+
+.cell, .spancell, .colheader {
+    padding: 0.5rem;
+}
+
+.colheader {
+    font-weight: bold;
+}
+
+@-webkit-keyframes blinker {
+  from {opacity: 1.0;}
+  to {opacity: 0.0;}
+}
+
+.cell:hover:before, .spancell:hover:before {
+    content: '|';
+    text-decoration: blink;
+    -webkit-animation-name: blinker;
+    -webkit-animation-iteration-count:infinite;
+    -webkit-animation-timing-function:cubic-bezier(1.0,0,0,1.0);
+    -webkit-animation-duration: 1s;
+}
+
+.cell:hover:after, .spancell:hover:after {
+    content: '';
+    position: absolute;
+    left: .2rem;
+    top: .2rem;
+    width: 95%;
+    height: 85%;
+    background-color: #FFF;
+    border: 1px;
+    border-style: solid;
+    border-color: #AAA;
+    border-radius: .5rem;
+    opacity: .3;
 }

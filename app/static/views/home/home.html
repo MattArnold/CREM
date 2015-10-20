@@ -1,10 +1,34 @@
 <div class="container-fluid">
+    <div class="container filters navbar">
+        <ul class="pagination">
+            <li ng-repeat="item in tracks"><a href="/#/{{item.path}}">{{item.name}}</a></li>
+        </ul>
+        <div class="dropdown pull-right">
+          <button class="btn btn-default dropdown-toggle" type="button" id="col-revealer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Show A Column
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="col-revealer">
+            <li ng-repeat="item in columnnames">{{item.name}}</li>
+          </ul>
+        </div>
+        <div class="dropdown pull-right">
+          <button class="btn btn-default dropdown-toggle" type="button" id="col-hider" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Hide A Column
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="col-hider">
+            <li ng-repeat="item in columnnames">{{item.name}}</li>
+          </ul>
+        </div>
+        <button>Hide Filters</button>
+    </div>
     <div class="row" style="margin-bottom: 1rem;">
-        <div class="col-md-4 hidden-sm hidden-xs h4 odd cell">Title</div>
-        <div class="col-md-1 hidden-sm hidden-xs h4 even cell">Track</div>
-        <div class="col-md-2 hidden-sm hidden-xs h4 odd cell">Start</div>
-        <div class="col-md-2 hidden-sm hidden-xs h4 even cell">Room</div>
-        <div class="col-md-3 hidden-sm hidden-xs h4 odd cell">Program Participant(s)</div>
+        <div class="col-md-4 hidden-sm hidden-xs odd colheader">Title</div>
+        <div class="col-md-1 hidden-sm hidden-xs even colheader">Track</div>
+        <div class="col-md-2 hidden-sm hidden-xs odd colheader">Start</div>
+        <div class="col-md-2 hidden-sm hidden-xs even colheader">Room</div>
+        <div class="col-md-3 hidden-sm hidden-xs odd colheader">Program Participant(s)</div>
     </div>
     <div ng-repeat="event in events | orderBy:'track'" class="row">
         <div class="col-md-4 col-sm-11 odd title cell">{{event.title}}</div>
@@ -14,6 +38,7 @@
         <div class="col-md-3 col-sm-4 odd cell">
             <span ng-repeat="presenter in event.presenters">{{presenter}}{{$last ? '' : ', '}}</span>
         </div>
-        <div class="col-md-12 odd spancell">{{event.description}}</div>
+       <div class="clearfix"></div>
+       <div class="col-md-12 odd spancell">{{event.description}}</div>
     </div>
 </div>
