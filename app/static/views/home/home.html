@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="container filters navbar">
-        <ul class="pagination" ng-show="controlsShown">
-            <li ng-repeat="item in tracks"><a href="/#/{{item.path}}">{{item.name}}</a></li>
+        <ul class="btn-group" ng-show="controlsShown">
+            <button type="button" ng-repeat="item in tracks" ng-click="trackFilter()">{{item.name}}</button>
         </ul>
         <div class="btn-group" ng-show="controlsShown">
             <button type="button" class="btn btn-primary">Create New Event</button>
@@ -45,10 +45,10 @@
     </div>
 <!--     TODO: ng-controller="EventEditingFormController"
  -->    <form name="eventEditingForm">
-    <div ng-repeat="event in events | orderBy:'track'" class="row">
+    <div ng-repeat="event in events | orderBy:'track'" class="row" ng-show="filter.{{event.track.uid}}">
         <div class="col-md-4 col-sm-11 odd title cell" data-id="$index" data-cell="title">{{event.title}}</div>
 <!--         <input class="col-md-4 col-sm-11 odd cell" data-id="$index" data-cell="title" value={{event.title}} ng-show="hidden">
- -->        <div class="col-md-1 col-sm-1 even cell">{{event.track}}</div>
+ -->        <div class="col-md-1 col-sm-1 even cell">{{event.track.name}}</div>
         <div class="col-md-2 col-sm-4 odd cell">{{event.day}} {{event.time}}</div>
     	<div class="col-md-2 col-sm-4 even cell">{{event.room}}</div>
         <div class="col-md-3 col-sm-4 odd cell">

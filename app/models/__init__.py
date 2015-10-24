@@ -88,9 +88,10 @@ class Track(db.Model):
 
     @property
     def names(self):
-       """Return only the names of the tracks"""
+       """Return only the names and uids of the tracks"""
        return {
-           'name' : self.name
+           'name' : self.name,
+           'uid' : self.uid
        }
 
     #The only reason CREM keeps staff email addresses in the
