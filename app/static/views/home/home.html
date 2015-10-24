@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="container filters navbar">
         <ul class="btn-group" ng-show="controlsShown">
-            <button type="button" ng-repeat="item in tracks" ng-click="trackFilter()">{{item.name}}</button>
+            <button type="button" ng-repeat="item in tracks" ng-click="trackFilter()" class="btn" ng-class="{ 'btn-info': filter[this.item.uid] }" >{{item.name}}</button>
         </ul>
         <div class="btn-group" ng-show="controlsShown">
             <button type="button" class="btn btn-primary">Create New Event</button>
