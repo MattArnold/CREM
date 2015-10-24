@@ -189,6 +189,8 @@ class Room(db.Model):
     __tablename__ = 'room'
     id = db.Column(db.Integer, primary_key=True)
     room_name = db.Column(db.String(50))
+    room_sq_ft = db.Column(db.Integer)
+    room_capacity = db.Column(db.Integer)
     room_group_id = db.Column(db.Integer, db.ForeignKey('room_group.id'))
     room_group = db.relationship('RoomGroup', backref='rooms')
     convention_id = db.Column(db.Integer, db.ForeignKey('convention.id'))
