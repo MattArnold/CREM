@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="container filters navbar">
         <ul class="btn-group" ng-show="controlsShown">
-            <button type="button" ng-repeat="item in tracks" ng-click="trackFilter()" class="btn" ng-class="{ 'btn-info': filter[this.item.uid] }" >{{item.name}}</button>
+            <button type="button" ng-repeat="item in tracks" ng-click="trackFilter()" class="btn" ng-class="{ 'btn-info': item.visible }" >{{item.name}}</button>
         </ul>
         <div class="btn-group" ng-show="controlsShown">
             <button type="button" class="btn btn-primary">Create New Event</button>
@@ -43,9 +43,15 @@
         <div class="col-md-2 hidden-sm hidden-xs even colheader">Room</div>
         <div class="col-md-3 hidden-sm hidden-xs odd colheader">Program Participant(s)</div>
     </div>
-<!--     TODO: ng-controller="EventEditingFormController"
- -->    <form name="eventEditingForm">
-    <div ng-repeat="event in events | orderBy:'track'" class="row" ng-show="filter.{{event.track.uid}}">
+    <div class="well text-center" ng-show="allTracksHidden">
+        Use the buttons to reveal some tracks.
+    </div>
+    <div class="clearfix">
+    </div>
+ <!--     TODO: ng-controller="EventEditingFormController"
+    <form name="eventEditingForm">
+ -->
+    <div ng-repeat="event in events | orderBy:'track'" class="row" ng-show="tracks['{{event.track.uid}}'].visible">
         <div class="col-md-4 col-sm-11 odd title cell" data-id="$index" data-cell="title">{{event.title}}</div>
 <!--         <input class="col-md-4 col-sm-11 odd cell" data-id="$index" data-cell="title" value={{event.title}} ng-show="hidden">
  -->        <div class="col-md-1 col-sm-1 even cell">{{event.track.name}}</div>

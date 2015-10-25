@@ -2,33 +2,37 @@ angular.module('CREM')
   .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
     var responsePromise = $http.get('/tracks.json');
     $scope.controlsShown = true;
-    $scope.filter = [];
+    $scope.tracks = {};
+    $scope.allTracksHidden = true;
 
     responsePromise.success(function(data) {
-      $scope.tracks = data.tracknames;
-    });
-
-    angular.forEach($scope.tracks, function(track) {
-      $scope.filter[track.uid] = false;
+      angular.forEach(data.tracknames, function(track) {
+        $scope.tracks[track.uid] = {};
+        $scope.tracks[track.uid].uid = track.uid;
+        $scope.tracks[track.uid].name = track.name;
+        $scope.tracks[track.uid].visible = false;
+      });
     });
 
     $scope.trackFilter = function() {
-      var whatwasclicked = this.item.uid;
-        console.log('What was clicked was ' + JSON.stringify(whatwasclicked) );
-      angular.forEach($scope.tracks, function(track){
-        if (track.uid === whatwasclicked){
-          if ($scope.filter[whatwasclicked] === true) {
-            $scope.filter[whatwasclicked] = false;
-          } else {
-            $scope.filter[whatwasclicked] = true;
-          }
-        console.log('track.shown is ' + track.shown);
-        }
+      // "this" refers to the filter button HTML element.
+      // ng-repeat attaches data to it. Angular reserves the word
+      // 'track' in templates as a verb, so I apologize for
+      // replacing it with the vague word 'item'.
+      var clicked = this.item.uid;
+      var visibleTracks;
+
+      $scope.tracks[clicked].visible = $scope.tracks[clicked].visible ? false : true;
+
+      // Test whether all the tracks are now hidden.
+      visibleTracks = _.find($scope.tracks, function(track) {
+        return track.visible === true;
       });
+      $scope.allTracksHidden = visibleTracks ? false : true;
     };
 
     responsePromise.error(function() {
-      $scope.tracks = [{ 'name': 'No Tracks Found' }];
+      $scope.tracks = [{notracksfound:{'name':'No Tracks Found','uid':'notracksfound',visible:'true'}}];
     });
 
     $scope.columnnames = [
