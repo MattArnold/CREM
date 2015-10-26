@@ -40,6 +40,8 @@ body {
 }
 
 .cell:hover:before, .spancell:hover:before {
+    position: absolute;
+    left: 0.2em;
     content: '|';
     text-decoration: blink;
     -webkit-animation-name: blinker;
