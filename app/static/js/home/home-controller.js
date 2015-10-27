@@ -1,18 +1,69 @@
 angular.module('CREM')
   .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
-    var responsePromise = $http.get('/tracks.json');
+    var columnsResponsePromise = $http.get('/columns.json');
+    var tracksResponsePromise = $http.get('/tracks.json');
     $scope.controlsShown = true;
     $scope.tracks = {};
     $scope.allTracksHidden = true;
+    $scope.allColumns = [];
+    $scope.visibleColumns = [];
+    $scope.hiddenColumns = [];
+    $scope.orderByColumn = 'track';
 
-    responsePromise.success(function(data) {
+    tracksResponsePromise.success(function(data) {
       angular.forEach(data.tracknames, function(track) {
         $scope.tracks[track.uid] = {};
         $scope.tracks[track.uid].uid = track.uid;
         $scope.tracks[track.uid].name = track.name;
-        $scope.tracks[track.uid].visible = false;
       });
     });
+
+    columnsResponsePromise.success(function(data) {
+      $scope.allColumns = data.columnnames;
+      $scope.visibleColumns = $scope.allColumns;
+      // These columns are hidden by default:
+      _.each(['eventnumber','type','duration'], function(columnid){
+        $scope.hideColumn(columnid);
+      });
+    });
+
+    function setColumnWidths() {
+      // When the screen is at bootstrap's `col-md` width,
+      // each event will be two rows. The top row will contain
+      // all fields except `description`, adding up to 12
+      // bootstrap grid increments. `description` will fill the
+      // entire 12 increments of the following row's width.
+      var descriptionColumn = _.find($scope.visibleColumns, {'id': 'description'});
+      var colsWithoutDesc = _.without($scope.visibleColumns, descriptionColumn);
+      var numOfCols = colsWithoutDesc.length;
+      var standardWidth = Math.floor(12 / numOfCols);
+      // Increase the width of the title if necessary to fill to 12.
+      var titleWidth = (standardWidth * (numOfCols - 1)) < 12 ? 12 - (standardWidth * (numOfCols -1)) : standardWidth;
+      console.log('numOfCols ' + numOfCols + ' standardWidth ' + standardWidth + ' titleWidth ' + titleWidth);
+
+      _.each($scope.allColumns, function(column){
+        column.width = column.id === 'description' ? 12 : standardWidth;
+        if (column.id === 'title') {
+          column.width = titleWidth;
+        }
+      });
+    }
+
+    $scope.hideColumn = function(columnid) {
+      var removedColumn = _.find($scope.visibleColumns, {'id': columnid});
+      _.pull($scope.visibleColumns, removedColumn);
+      $scope.hiddenColumns.push(removedColumn);
+      setColumnWidths();
+      // console.log('hiddenColumns ' + JSON.stringify($scope.hiddenColumns));
+    }
+
+    $scope.showColumn = function(columnid) {
+      var addedColumn = _.find($scope.hiddenColumns, {'id': columnid});
+      _.pull($scope.hiddenColumns, addedColumn);
+      $scope.visibleColumns.push(addedColumn);
+      setColumnWidths();
+      // console.log('visibleColumns ' + JSON.stringify($scope.visibleColumns));
+    }
 
     $scope.trackFilter = function() {
       // "this" refers to the filter button HTML element.
@@ -31,48 +82,9 @@ angular.module('CREM')
       $scope.allTracksHidden = visibleTracks ? false : true;
     };
 
-    responsePromise.error(function() {
+    tracksResponsePromise.error(function() {
       $scope.tracks = [{notracksfound:{'name':'No Tracks Found','uid':'notracksfound',visible:'true'}}];
     });
-
-    $scope.columnnames = [
-      {
-        id: 'id',
-        name: 'ID#'
-      },
-      {
-        id: 'title',
-        name: 'Title'
-      },
-      {
-        id: 'track',
-        name: 'Track'
-      },
-      {
-        id: 'time',
-        name: 'Start'
-      },
-      {
-        id: 'duration',
-        name: 'Duration'
-      },
-      {
-        id: 'room',
-        name: 'Room'
-      },
-      {
-        id: 'type',
-        name: 'Type'
-      },
-      {
-        id: 'presenters',
-        name: 'Program Participants'
-      },
-      {
-        id: 'description',
-        name: 'Description'
-      }
-    ];
 
   	// TODO: AJAXify this hard-coded data
   	$scope.events = [
@@ -141,4 +153,13 @@ angular.module('CREM')
       }
    	];
   }
-]);
+])
+.filter('visibleColumnOrder', function() {
+  return function(mysteryVariable, allColumns, visibleColumns, inverted) {
+    // console.log('mysteryVariable ' + JSON.stringify(mysteryVariable) + 'allColumns ' + JSON.stringify(allColumns) + ' visibleColumns ' + JSON.stringify(visibleColumns));
+
+    var filtered = _.sortBy(allColumns, visibleColumns);
+    // console.log('filtered ' + JSON.stringify(filtered) );
+    return filtered;
+  };
+});

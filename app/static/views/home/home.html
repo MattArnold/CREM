@@ -3,45 +3,33 @@
         <ul class="btn-group" ng-show="controlsShown">
             <button type="button" ng-repeat="item in tracks" ng-click="trackFilter()" class="btn" ng-class="{ 'btn-info': item.visible }" >{{item.name}}</button>
         </ul>
-        <div class="btn-group" ng-show="controlsShown">
-            <button type="button" class="btn btn-primary">Create New Event</button>
-            <div class="btn-group">
-              <button class="btn btn-default dropdown-toggle" type="button" id="row-sorter" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Sort Rows By Column
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="row-sorter">
-                <li ng-repeat="item in columnnames">{{item.name}}</li>
-              </ul>
+        <div class="input-group" ng-show="controlsShown">
+            <div class="btn-group align-bottom">
+            <button id="createNewEvent" type="button" class="btn btn-primary">Create New Event</button>
             </div>
             <div class="btn-group">
-              <button class="btn btn-default dropdown-toggle" type="button" id="col-revealer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Show A Column
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="col-revealer">
-                <li ng-repeat="item in columnnames">{{item.name}}</li>
-              </ul>
+            <label class="control-label" for="sortRowsByColumn">Sort Rows By Column:</label>
+            <select id="sortRowsByColumn" ng-model="orderByColumn" class="form-control" ng-options="column.id as column.name for column in visibleColumns">
+            </select>
             </div>
             <div class="btn-group">
-              <button class="btn btn-default dropdown-toggle" type="button" id="col-hider" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Hide A Column
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="col-hider">
-                <li ng-repeat="item in columnnames">{{item.name}}</li>
-              </ul>
+            <label class="control-label" for="showAColumn">Show A Column:</label>
+            <select id="showAColumn" ng-model="addedColumnId" class="form-control" ng-options="hiddencolumn.id as hiddencolumn.name for hiddencolumn in hiddenColumns" ng-change="showColumn(addedColumnId)">
+            </select>
             </div>
+            <div class="btn-group">
+            <label class="control-label" for="hideAColumn">Hide A Column:</label>
+            <select id="hideAColumn" ng-model="removedColumnId" class="form-control" ng-options="visiblecolumn.id as visiblecolumn.name for visiblecolumn in visibleColumns" ng-change="hideColumn(removedColumnId)">
+            </select>
+            </div>
+            <div class="btn-group">
             <button class="btn btn-primary" ng-click="controlsShown = false;" >Hide Controls <span class="glyphicon glyphicon-resize-small" aria-hidden="true"></span></button>
+            </div>
         </div>
         <button class="btn btn-primary" ng-click="controlsShown = true;" ng-hide="controlsShown">Show Controls <span class="glyphicon glyphicon-resize-full" aria-hidden="true"></span></button>
     </div>
      <div class="row" style="margin-bottom: 1rem;">
-        <div class="col-md-4 hidden-sm hidden-xs odd colheader">Title</div>
-        <div class="col-md-1 hidden-sm hidden-xs even colheader">Track</div>
-        <div class="col-md-2 hidden-sm hidden-xs odd colheader">Start</div>
-        <div class="col-md-2 hidden-sm hidden-xs even colheader">Room</div>
-        <div class="col-md-3 hidden-sm hidden-xs odd colheader">Program Participant(s)</div>
+        <div ng-repeat="column in visibleColumns" class="col-md-{{column.width}} hidden-sm hidden-xs colheader" ng-class-odd="'odd'" ng-class-even="'even'" ng-if="column.id != 'description'">{{column.name}}</div>
     </div>
     <div class="well text-center" ng-show="allTracksHidden">
         Use the buttons to reveal some tracks.
@@ -51,7 +39,7 @@
  <!--     TODO: ng-controller="EventEditingFormController"
     <form name="eventEditingForm">
  -->
-    <div ng-repeat="event in events | orderBy:'track'" class="row" ng-show="tracks['{{event.track.uid}}'].visible">
+    <div ng-repeat="event in events | orderBy:orderByColumn" class="row" ng-show="tracks['{{event.track.uid}}'].visible">
         <div class="col-md-4 col-sm-11 odd title cell" data-id="$index" data-cell="title">{{event.title}}</div>
 <!--         <input class="col-md-4 col-sm-11 odd cell" data-id="$index" data-cell="title" value={{event.title}} ng-show="hidden">
  -->        <div class="col-md-1 col-sm-1 even cell">{{event.track.name}}</div>

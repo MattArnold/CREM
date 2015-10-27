@@ -138,6 +138,21 @@ class Event(db.Model):
     def __repr__(self):
         return 'Event: %s' % self.title
 
+    @property
+    def useroutput(self):
+       return {
+           'eventnumber' : self.id,
+           'title' : self.title,
+           'description' : self.description,
+           'comments' : self.comments,
+           'track' : self.track,
+           'rooms' : self.rooms,
+           'eventtype' : self.eventtype,
+           'resources' : self.resources,
+           'presenters' : self.presenters,
+           'start' : self.start_dt,
+           'duration' : self.duration
+       }
 
 class EventType(db.Model):
     __tablename__ = 'eventtype'
