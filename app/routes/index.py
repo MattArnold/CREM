@@ -20,7 +20,18 @@ def tracks():
 
 @app.route('/columns.json')
 def columns():
-    return jsonify(columnnames = [{'id':'eventnumber','name':'#',},{'id':'title','name':'Title',},{'id':'track','name':'Track',},{'id':'start','name':'Start',},{'id':'duration','name':'Duration',},{'id':'room','name':'Room',},{'id':'type','name':'Type',},{'id':'presenters','name':'Program Participants',},{'id':'description','name':'Description',}])
+    return jsonify(
+        columns = {
+        'eventnumber': {'id':'eventnumber','name':'#',},
+        'title': {'id':'title','name':'Title',},
+        'track': {'id':'track','name':'Track',},
+        'start': {'id':'start','name':'Start',},
+        'duration': {'id':'duration','name':'Duration',},
+        'room': {'id':'room','name':'Room',},
+        'type': {'id':'type','name':'Type',},
+        'presenters': {'id':'presenters','name':'Program Participants',},
+        'description': {'id':'description','name':'Description',}
+        })
 
 @app.route('/eventlist.json')
 def events():
