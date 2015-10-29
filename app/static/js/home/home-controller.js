@@ -48,12 +48,16 @@ angular.module('CREM')
       var visibleAndHidden = _.countBy(colsWithoutDesc, 'visible');
       var numOfCols = visibleAndHidden[true];
       var standardWidth = Math.floor(12 / numOfCols);
-      var extraWidth = (standardWidth * (numOfCols - 1)) < 12 ? 12 - (standardWidth * (numOfCols -1)) : standardWidth;
+      var accumulatedWidth = standardWidth * numOfCols;
 
       _.each($scope.columns, function(column){
         column.width = column.id === 'description' ? 12 : standardWidth;
-        if (column.id === 'presenters') {
-          column.width = extraWidth;
+      });
+
+      _.each(['presenters','title','room','start','track','type','duration','eventnumber'], function(columnid){
+        if (accumulatedWidth < 12 && $scope.columns[columnid].visible) {
+          $scope.columns[columnid].width++;
+          accumulatedWidth++;
         }
       });
     }
