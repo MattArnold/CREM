@@ -27,7 +27,7 @@ angular.module('CREM')
         column.visible = true;
       });
 
-      _.each(['eventnumber','title','type','start','duration','room','presenters','description'], function(columnid, i){
+      _.each(['eventnumber','title','track','type','start','duration','room','presenters','description'], function(columnid, i){
         $scope.columns[columnid].order = i;
       });
       // These columns are hidden by default:
