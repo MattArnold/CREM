@@ -39,7 +39,7 @@
             {{event[column.id]}}
         </div>
        <div class="clearfix"></div>
-        <div class="spancell col-md-{{column.width}}" ng-repeat-last="column in visibleColumns" ng-if="columns.description.visible">
+        <div class="spancell col-md-12" ng-repeat-end ng-if="columns.description.visible">
             {{event['description']}}
         </div>
     </div>
