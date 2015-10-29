@@ -21,7 +21,7 @@
         <button class="btn btn-primary" ng-click="controlsShown = true;" ng-hide="controlsShown">Show Controls <span class="glyphicon glyphicon-resize-full" aria-hidden="true"></span></button>
     </div>
      <div class="row">
-        <div ng-repeat="column in columns | toArray | orderBy : 'order'" class="col-md-{{column.width}} hidden-sm hidden-xs colheader" ng-class-odd="'odd'" ng-class-even="'even'" ng-if="columns[column.id].visible && column.id !== 'description'">{{column.name}}</div>
+        <div ng-repeat="column in columns | toArray | orderBy : 'order' | filter : {'visible':true}" class="col-md-{{column.width}} hidden-sm hidden-xs colheader" ng-class-odd="'odd'" ng-class-even="'even'" ng-if="column.id !== 'description'">{{column.name}}</div>
     </div>
     <div class="well text-center" ng-show="allTracksHidden">
         Use the buttons to reveal some tracks.
@@ -35,7 +35,7 @@
     <form name="eventEditingForm">
  -->
     <div ng-repeat="event in events | orderBy:orderByColumn" class="row" ng-show="tracks['{{event.trackuid}}'].visible">
-        <div class="cell col-md-{{column.width}} {{column.id}}" ng-class-even="'even'" ng-class-odd="'odd'" ng-repeat="column in columns | toArray | orderBy : 'order'" ng-if="columns[column.id].visible && column.id!=='description'">
+        <div class="cell col-md-{{column.width}} {{column.id}}" ng-class-even="'even'" ng-class-odd="'odd'" ng-repeat="column in columns | toArray | orderBy : 'order' | filter : {'visible':true}" ng-if="column.id!=='description'">
             {{event[column.id]}}
         </div>
        <div class="clearfix"></div>
