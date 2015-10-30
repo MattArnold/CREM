@@ -17,6 +17,7 @@
             <div class="btn-group">
             <button class="btn btn-primary" ng-click="controlsShown = false;" >Hide Controls <span class="glyphicon glyphicon-resize-small" aria-hidden="true"></span></button>
             </div>
+            <button class="btn btn-warning" ng-if="unsavedEdits">Save All Edits <span class="glyphicon glyphicon-save" aria-hidden="true"></button>
         </div>
         <button class="btn btn-primary" ng-click="controlsShown = true;" ng-hide="controlsShown">Show Controls <span class="glyphicon glyphicon-resize-full" aria-hidden="true"></span></button>
     </div>
@@ -34,13 +35,11 @@
  <!--     TODO: ng-controller="EventEditingFormController"
     <form name="eventEditingForm">
  -->
-    <div ng-repeat="event in events | orderBy:orderByColumn" class="row" ng-show="tracks['{{event.trackuid}}'].visible">
-        <div class="cell col-md-{{column.width}} {{column.id}}" ng-class-even="'even'" ng-class-odd="'odd'" ng-repeat="column in columns | toArray | orderBy : 'order' | filter : {'visible':true}" ng-if="column.id!=='description'">
-            {{event[column.id]}}
+    <div ng-repeat="event in events | orderBy:orderByColumn" class="row" ng-class="{'unsaved': event.edited}" ng-show="tracks['{{event.trackuid}}'].visible">
+        <div class="cell col-md-{{column.width}} {{column.id}} unedited" ng-class-even="'even'" ng-class-odd="'odd'" ng-repeat="column in columns | toArray | orderBy : 'order' | filter : {'visible':true}" ng-if="column.id!=='description'" contenteditable ng-model="event[column.id]" ng-change="">
         </div>
        <div class="clearfix"></div>
-        <div class="spancell col-md-12" ng-repeat-end ng-if="columns.description.visible">
-            {{event['description']}}
+        <div class="spancell col-md-12 unedited" ng-repeat-end ng-if="columns.description.visible" contenteditable ng-model="event.description">
         </div>
     </div>
     </form>

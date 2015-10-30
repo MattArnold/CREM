@@ -39,7 +39,7 @@ body {
   to {opacity: 0.0;}
 }
 
-.cell:hover:before, .spancell:hover:before {
+.unedited:hover:before {
     position: absolute;
     left: 0.2em;
     content: '|';
@@ -50,7 +50,7 @@ body {
     -webkit-animation-duration: 1s;
 }
 
-.cell:hover:after, .spancell:hover:after {
+.unedited:hover:after {
     content: '';
     position: absolute;
     left: .2rem;
@@ -63,4 +63,7 @@ body {
     border-color: #AAA;
     border-radius: .5rem;
     opacity: .3;
+}
+.edited {
+    outline: 2px dotted #c09853;
 }

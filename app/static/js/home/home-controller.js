@@ -109,7 +109,7 @@ angular.module('CREM')
         duration: '1hr',
         type: 'panel',
         eventnumber: 0,
-  			description: 'Example of a hard-coded event. This is the description.'
+  		description: 'Example of a hard-coded event. This is the description.',
   		},
   		{
   			title: 'Another Example Title',
@@ -185,4 +185,25 @@ angular.module('CREM')
       }
    	];
   }
-]);
+]).directive("contenteditable", function() {
+  return {
+    restrict: "A",
+    require: "ngModel",
+    link: function(scope, element, attrs, ngModel) {
+
+      function read() {
+        ngModel.$setViewValue(element.html());
+      }
+
+      ngModel.$render = function() {
+        element.html(ngModel.$viewValue || "");
+      };
+
+      element.bind("blur keyup change", function(a) {
+        scope.$apply(read);
+        element[0].classList.remove('odd', 'even', 'unedited');
+        element[0].classList.add('alert-warning', 'edited');
+      });
+    }
+  };
+});
