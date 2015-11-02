@@ -113,4 +113,7 @@ module.exports = function (grunt) {
       'watch'
     ]);
   });
+
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
+
 };
