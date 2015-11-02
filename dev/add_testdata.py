@@ -4,20 +4,23 @@ Inserts test data into the CREM database.
 
 import sys
 import os
+import csv
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+script_dir = os.path.dirname(__file__)
+sys.path.append(os.path.abspath(os.path.join(script_dir, '..')))
 
 from app import db
-from app.models import Track
+from app.models import Track, Event
 
 # Delete all exsiting tracks.
 tracks = Track.query.all()
-for tracks in tracks:
-    db.session.delete(tracks)
+for track in tracks:
+    db.session.delete(track)
 db.session.commit()
 
 # Add tracks.
 
+# The track name and the email address for each CREM track.
 track_infos = (
     ('Literature', 'literature@penguicon.org'),
     ('Tech', 'tech@penguicon.org'),
@@ -37,6 +40,56 @@ track_infos = (
 for track_info in track_infos:
     track = Track(track_info[0], track_info[1])
     db.session.add(track)
+
+# Commit the test data to the database.
+db.session.commit()
+
+# Delete all exsiting events.
+events = Event.query.all()
+for event in events:
+    db.session.delete(event)
+db.session.commit()
+
+# The track name in TuxTrax and the corresponding name in CREM.
+tuxtrax_tracks = {
+    'literature': 'Literature',
+    'tech': 'Tech',
+    'after-dark': 'After Dark',
+    'action-adventure': 'Action Adventure',
+    'costuming': 'Costuming',
+    'webcomics': 'Web Comics',
+    'gaming': 'Gaming',
+    'diy': 'D.I.Y.',
+    'film': 'Film',
+    'food': 'Food',
+    'video-gaming': 'Video Gaming',
+    'science': 'Science',
+    'eco': 'Eco',
+}
+
+# Read events from events file.
+events_file = open(os.path.join(script_dir, 'test_events.txt'), 'rb')
+csvreader = csv.reader(events_file, delimiter='|', quotechar='"')
+first_row = True
+for row in csvreader:
+    if first_row:
+        # Skip the header line.
+        first_row = False
+        continue
+    if row[2] in tuxtrax_tracks:
+        track_name = tuxtrax_tracks[row[2]]
+    else:
+        # There is no corresponding track in CREM at this time.
+        continue
+    event = Event()
+    event.title = row[0]
+    event.description = unicode(row[1], 'utf8')
+    event.track = db.session.query(Track).\
+        filter(Track.name == track_name).first()
+    event.duration = int(row[3])
+    event.failityRequest = row[4]
+    db.session.add(event)
+events_file.close()
 
 # Commit the test data to the database.
 db.session.commit()
