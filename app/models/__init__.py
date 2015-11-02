@@ -88,20 +88,23 @@ class Track(db.Model):
 
     @property
     def names(self):
-       """Return only the names and uids of the tracks"""
-       return {
-           'name' : self.name,
-           'uid' : self.uid
-       }
+        """ Return only the names and uids of the tracks. """
+        return {
+            'name': self.name,
+            'uid': self.uid
+        }
 
-    #The only reason CREM keeps staff email addresses in the
-    #database is so CREM can send emails. We will not
-    #include staff email addresses in any AJAX endpoints
-    #because all our staff understand each email
-    #begins with a track name, so they know how to contact
-    #each other already. Users = tracks = email addresses.
-    #If we expose them through an endpoint, the only value
-    #we provide would be for spam spiders to collect them.
+    """
+    The only reason CREM keeps staff email addresses in the
+    database is so CREM can send emails. We will not
+    include staff email addresses in any AJAX endpoints
+    because all our staff understand each email
+    begins with a track name, so they know how to contact
+    each other already. Users = tracks = email addresses.
+    If we expose them through an endpoint, the only value
+    we provide would be for spam spiders to collect them.
+    """
+
 
 class Event(db.Model):
     __tablename__ = 'event'
@@ -140,19 +143,20 @@ class Event(db.Model):
 
     @property
     def useroutput(self):
-       return {
-           'eventnumber' : self.id,
-           'title' : self.title,
-           'description' : self.description,
-           'comments' : self.comments,
-           'track' : self.track,
-           'rooms' : self.rooms,
-           'eventtype' : self.eventtype,
-           'resources' : self.resources,
-           'presenters' : self.presenters,
-           'start' : self.start_dt,
-           'duration' : self.duration
-       }
+        return {
+            'eventnumber': self.id,
+            'title': self.title,
+            'description': self.description,
+            'comments': self.comments,
+            'track': self.track,
+            'rooms': self.rooms,
+            'eventtype': self.eventtype,
+            'resources': self.resources,
+            'presenters': self.presenters,
+            'start': self.start_dt,
+            'duration': self.duration
+        }
+
 
 class EventType(db.Model):
     __tablename__ = 'eventtype'
