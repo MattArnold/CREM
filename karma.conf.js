@@ -17,7 +17,7 @@ module.exports = function(config) {
     files: [
       'lib/angular/angular.js',
       'js/app.js',
-      'js/**/*/js',
+      'js/**/*.js',
       'tests/*.js',
       'tests/**/*.js',
       '*.html',

@@ -1,5 +1,8 @@
-describe('example home-controller test', function() {
-    it('should be true', function() {
-        expect('foo').toBe('foo');
-    });
+describe('Home Controller:', function() {
+
+  it("should exist", function() {
+    expect(angular.module('CREM').HomeController).not.toEqual(null);
+  });
+
+
 });
