@@ -10,7 +10,7 @@ script_dir = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(script_dir, '..')))
 
 from app import db
-from app.models import Track, Event
+from app.models import Track, Event, Resource
 
 # Delete all exsiting tracks.
 tracks = Track.query.all()
@@ -90,6 +90,25 @@ for row in csvreader:
     event.failityRequest = row[4]
     db.session.add(event)
 events_file.close()
+
+# Commit the test data to the database.
+db.session.commit()
+
+# Add resources.
+
+# For each Resource, the name, request form label and whether
+# the resource should be displayed.
+resource_infos = (
+    ('Projector', 'This event CANNOT happen without a projector', True),
+    ('Microphone/sound system',
+     'This event CANNOT happen without a microphone and sound system', True),
+    ('Drinking water', 'Drinking water', True),
+    ('Quiet (no airwalls)', 'Quiet (no airwalls)', True),
+)
+
+for resource_info in resource_infos:
+    resource = Resource(resource_info[0], resource_info[1], resource_info[2])
+    db.session.add(resource)
 
 # Commit the test data to the database.
 db.session.commit()
