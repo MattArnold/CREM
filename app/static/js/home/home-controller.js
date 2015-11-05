@@ -27,34 +27,38 @@ angular.module('CREM')
         column.visible = true;
       });
 
-      _.each(['eventnumber','title','track','type','start','duration','room','presenters','description'], function(columnid, i){
+      _.each(['eventnumber','title','track','type','start','duration','room','presenters','resources','description','comments'], function(columnid, i){
         $scope.columns[columnid].order = i;
       });
       // These columns are hidden by default:
-      _.each(['eventnumber','type','duration'], function(columnid){
+      _.each(['eventnumber','type','resources','duration','comments'], function(columnid){
         $scope.columns[columnid].visible = false;
       });
       setColumnWidths();
     });
 
     function setColumnWidths() {
-      // When the screen is at bootstrap's `col-md` width,
-      // each event will be two rows. The top row will contain
-      // all fields except `description`, adding up to 12
-      // bootstrap grid increments. `description` will fill the
-      // entire 12 increments of the following row's width.
-      var colsWithoutDesc = _.clone($scope.columns);
-      delete colsWithoutDesc.description;
-      var visibleAndHidden = _.countBy(colsWithoutDesc, 'visible');
+      // When the screen is at bootstrap's `col-md` width, each event will be
+      // multiple rows. The top row will contain all fields except
+      // `description` and `comments`, adding up to 12 bootstrap grid
+      // increments. `description` and `comments` will each fill the entire 12
+      // increments of its row's width.
+      var colsWithoutLong = _.clone($scope.columns);
+      delete colsWithoutLong.description;
+      delete colsWithoutLong.comments;
+      var visibleAndHidden = _.countBy(colsWithoutLong, 'visible');
       var numOfCols = visibleAndHidden[true];
       var standardWidth = Math.floor(12 / numOfCols);
       var accumulatedWidth = standardWidth * numOfCols;
 
       _.each($scope.columns, function(column){
-        column.width = column.id === 'description' ? 12 : standardWidth;
+        column.width = standardWidth;
       });
 
-      _.each(['presenters','title','room','start','track','type','duration','eventnumber'], function(columnid){
+      $scope.columns.description.width = 12;
+      $scope.columns.comments.width = 12;
+
+      _.each(['presenters','title','resources','room','start','track','type','duration','eventnumber'], function(columnid){
         if (accumulatedWidth < 12 && $scope.columns[columnid].visible) {
           $scope.columns[columnid].width++;
           accumulatedWidth++;
@@ -109,7 +113,9 @@ angular.module('CREM')
         duration: '1hr',
         type: 'panel',
         eventnumber: 0,
-  		description: 'Example of a hard-coded event. This is the description.',
+        resources: 'projector',
+    		description: 'Example of a hard-coded event. This is the description.',
+        comments: 'As a Penguicon staffer, I want to leave a reminder in this field.',
   		},
   		{
   			title: 'Another Example Title',
@@ -121,7 +127,9 @@ angular.module('CREM')
         duration: '2hrs',
         type: 'workshop',
         eventnumber: 1,
- 			description: 'Example of another hard-coded event. This is the description of it. These are all grouped by track.'
+        resources: '',
+   			description: 'Example of another hard-coded event. This is the description of it. These are all grouped by track.',
+        comments: 'When generating a report from CREM, remember not to include this comment field-- for example, do not make it visible in the schedule book or on signage.',
   		},
   		{
   			title: 'A Food Example Title',
@@ -133,7 +141,9 @@ angular.module('CREM')
         duration: '1hr',
         type: 'workshop',
         eventnumber: 2,
- 			description: 'Example of another hard-coded event. This is the description of it.'
+        resources: 'plastic sheet',
+   			description: 'Example of another hard-coded event. This is the description of it.',
+        comments: '',
   		},
   		{
   			title: 'A Literature Example Title',
@@ -145,7 +155,9 @@ angular.module('CREM')
         duration: '1hr',
         type: 'panel',
         eventnumber: 3,
- 			description: 'Example of another hard-coded event. Grouped by track.'
+        resources: '',
+   			description: 'Example of another hard-coded event. Grouped by track.',
+        comments: 'Ask Phylis Durna if she wants to be on this panel',
   		},
       {
         title: 'A Deployment of Superpages',
@@ -157,7 +169,9 @@ angular.module('CREM')
         duration: '1hr',
         type: 'talk',
         eventnumber: 4,
-      description: 'Cache coherence must work. In fact, few cyberinformaticians would disagree with the analysis of voice-over-IP. AridPrawn, our new application for A* search, is the solution to all of these obstacles.'
+        resources: 'projector',
+        description: 'Cache coherence must work. In fact, few cyberinformaticians would disagree with the analysis of voice-over-IP. AridPrawn, our new application for A* search, is the solution to all of these obstacles.',
+        comments: '',
       },
       {
         title: 'A Pretend Game',
@@ -169,7 +183,9 @@ angular.module('CREM')
         duration: '2hr',
         type: 'game',
         eventnumber: 5,
-      description: 'A pretend game as an example event.'
+        resources: '',
+        description: 'A pretend game as an example event.',
+        comments: 'Janet, given how loud this is, I was wondering, is there another room we can move it to? --Matt',
       },
       {
         title: 'E-Commerce Deployment',
@@ -181,7 +197,9 @@ angular.module('CREM')
         duration: '1hr',
         type: 'talk',
         eventnumber: 6,
-      description: 'In recent years, much research has been devoted to the development of Internet QoS; unfortunately, few have harnessed the investigation of systems. Given the current status of amphibious algorithms, hackers worldwide compellingly desire the visualization of XML. DimVendue, our new methodology for scalable configurations, is the solution to all of these obstacles.'
+        resources: '',
+        description: 'In recent years, much research has been devoted to the development of Internet QoS; unfortunately, few have harnessed the investigation of systems. Given the current status of amphibious algorithms, hackers worldwide compellingly desire the visualization of XML. DimVendue, our new methodology for scalable configurations, is the solution to all of these obstacles.',
+        comments: '',
       }
    	];
   }

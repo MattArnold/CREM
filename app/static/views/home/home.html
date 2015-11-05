@@ -22,7 +22,7 @@
         <button class="btn btn-primary" ng-click="controlsShown = true;" ng-hide="controlsShown">Show Controls <span class="glyphicon glyphicon-resize-full" aria-hidden="true"></span></button>
     </div>
      <div class="row">
-        <div ng-repeat="column in columns | toArray | orderBy : 'order' | filter : {'visible':true}" class="col-md-{{column.width}} hidden-sm hidden-xs colheader" ng-class-odd="'odd'" ng-class-even="'even'" ng-if="column.id !== 'description'">{{column.name}}</div>
+        <div ng-repeat="column in columns | toArray | orderBy : 'order' | filter : {'visible':true}" class="col-md-{{column.width}} hidden-sm hidden-xs colheader" ng-class-odd="'odd'" ng-class-even="'even'" ng-if="column.id !== 'description' && column.id !== 'comments'">{{column.name}}</div>
     </div>
     <div class="well text-center" ng-show="allTracksHidden">
         Use the buttons to reveal some tracks.
@@ -36,10 +36,13 @@
     <form name="eventEditingForm">
  -->
     <div ng-repeat="event in events | orderBy:orderByColumn" class="row" ng-class="{'unsaved': event.edited}" ng-show="tracks['{{event.trackuid}}'].visible">
-        <div class="cell col-md-{{column.width}} {{column.id}} unedited" ng-class-even="'even'" ng-class-odd="'odd'" ng-repeat="column in columns | toArray | orderBy : 'order' | filter : {'visible':true}" ng-if="column.id!=='description'" contenteditable ng-model="event[column.id]" ng-change="">
+        <div class="cell col-md-{{column.width}} {{column.id}} unedited" ng-class-even="'even'" ng-class-odd="'odd'" ng-repeat="column in columns | toArray | orderBy : 'order' | filter : {'visible':true}" ng-if="column.id !== 'description' && column.id !== 'comments'" contenteditable ng-model="event[column.id]" ng-change="">
         </div>
        <div class="clearfix"></div>
-        <div class="spancell col-md-12 unedited" ng-repeat-end ng-if="columns.description.visible" contenteditable ng-model="event.description">
+        <div class="spancell col-md-12 unedited" ng-if="columns.description.visible" contenteditable ng-model="event.description">
+        </div>
+       <div class="clearfix"></div>
+        <div class="spancell col-md-12 unedited comment" ng-if="columns.comments.visible" contenteditable ng-model="event.comments">
         </div>
     </div>
     </form>

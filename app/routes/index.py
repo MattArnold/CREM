@@ -30,7 +30,9 @@ def columns():
         'room': {'id':'room','name':'Room',},
         'type': {'id':'type','name':'Type',},
         'presenters': {'id':'presenters','name':'Program Participants',},
-        'description': {'id':'description','name':'Description',}
+        'resources': {'id':'resources','name':'Resources',},
+        'description': {'id':'description','name':'Description',},
+        'comments': {'id':'comments','name':'Staff Comments',},
         })
 
 @app.route('/eventlist.json')

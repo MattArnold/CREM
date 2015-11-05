@@ -67,3 +67,11 @@ body {
 .edited {
     outline: 2px dotted #c09853;
 }
+
+.comment {
+    font-style: italic;
+}
+
+.comment:before {
+    content: 'Note: ';
+}
