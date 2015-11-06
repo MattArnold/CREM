@@ -6,8 +6,8 @@
         <ul class="btn-group" ng-show="controlsShown">
             <button type="button" ng-model="columns" ng-repeat="column in columns | toArray | orderBy: 'order'" ng-click="columnFilter()" class="btn" ng-class="{ 'btn-info': column.visible }" ng-change="setColumnWidths" >{{column.name}}</button>
         </ul>
-        <div class="input-group" ng-show="controlsShown">
-            <div class="btn-group align-bottom">
+        <form class="navbar-form form-horizontal" ng-show="controlsShown">
+            <div class="btn-group">
             <button id="createNewEvent" type="button" class="btn btn-primary">Create New Event</button>
             </div>
             <div class="btn-group">
@@ -15,12 +15,15 @@
             </select>
             </div>
             <div class="btn-group">
+            <input type="text" id="search" class="form-control" ng-model="query" placeholder="Search">
+            </div>
+            <div class="btn-group">
             <button class="btn btn-primary" ng-click="controlsShown = false;" >Hide Controls <span class="glyphicon glyphicon-resize-small" aria-hidden="true"></span></button>
             </div>
             <button class="btn btn-warning" ng-if="unsavedEdits">Save All Edits <span class="glyphicon glyphicon-save" aria-hidden="true"></button>
-        </div>
+        </form>
         <button class="btn btn-primary" ng-click="controlsShown = true;" ng-hide="controlsShown">Show Controls <span class="glyphicon glyphicon-resize-full" aria-hidden="true"></span></button>
-    </div>
+    </nav>
      <div class="row">
         <div ng-repeat="column in columns | toArray | orderBy : 'order' | filter : {'visible':true}" class="col-md-{{column.width}} hidden-sm hidden-xs colheader" ng-class-odd="'odd'" ng-class-even="'even'" ng-if="column.id !== 'description' && column.id !== 'comments'">{{column.name}}</div>
     </div>
@@ -35,7 +38,7 @@
  <!--     TODO: ng-controller="EventEditingFormController"
     <form name="eventEditingForm">
  -->
-    <div ng-repeat="event in events | orderBy:orderByColumn" class="row" ng-class="{'unsaved': event.edited}" ng-show="tracks['{{event.trackuid}}'].visible">
+    <div ng-repeat="event in events | orderBy:orderByColumn | filter : query" class="row" ng-class="{'unsaved': event.edited}" ng-show="tracks['{{event.trackuid}}'].visible">
         <div class="cell col-md-{{column.width}} {{column.id}} unedited" ng-class-even="'even'" ng-class-odd="'odd'" ng-repeat="column in columns | toArray | orderBy : 'order' | filter : {'visible':true}" ng-if="column.id !== 'description' && column.id !== 'comments'" contenteditable ng-model="event[column.id]" ng-change="">
         </div>
        <div class="clearfix"></div>

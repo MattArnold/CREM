@@ -4,5 +4,4 @@ describe('Home Controller:', function() {
     expect(angular.module('CREM').HomeController).not.toEqual(null);
   });
 
-
 });
