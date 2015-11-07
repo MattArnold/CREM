@@ -2,9 +2,11 @@ angular.module('CREM')
   .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
     var columnsResponsePromise = $http.get('/columns.json');
     var tracksResponsePromise = $http.get('/tracks.json');
+    var eventsResponsePromise = $http.get('/eventlist.json');
     $scope.controlsShown = true;
     $scope.tracks = {};
     $scope.columns = {};
+    $scope.events = {};
     $scope.allTracksHidden = false;
     $scope.allColumnsHidden = false;
     $scope.orderByColumn = 'track';
@@ -35,6 +37,10 @@ angular.module('CREM')
         $scope.columns[columnid].visible = false;
       });
       setColumnWidths();
+    });
+
+    eventsResponsePromise.success(function(data) {
+      $scope.events = data.eventlist;
     });
 
     function setColumnWidths() {
@@ -101,107 +107,6 @@ angular.module('CREM')
       $scope.tracks = [{notracksfound:{'name':'No Tracks Found','uid':'notracksfound',visible:'true'}}];
     });
 
-  	// TODO: AJAXify this hard-coded data
-  	$scope.events = [
-  		{
-  			title: 'Example Title',
-  			room: 'Windover',
-        start: 'Friday 7 pm',
-        trackuid: 'tech',
-  			track: 'Tech',
-  			presenters: 'Susan Simmons, Robert Reed',
-        duration: '1hr',
-        type: 'panel',
-        eventnumber: 0,
-        resources: 'projector',
-    		description: 'Example of a hard-coded event. This is the description.',
-        comments: 'As a Penguicon staffer, I want to leave a reminder in this field.',
-  		},
-  		{
-  			title: 'Another Example Title',
-  			room: 'Charlevoix A',
-  			start: 'Saturday 7 pm',
-        trackuid: 'literature',
-        track: 'Literature',
-   			presenters: 'Norman Morgenstern, Roselyn R. Ferguson',
-        duration: '2hrs',
-        type: 'workshop',
-        eventnumber: 1,
-        resources: '',
-   			description: 'Example of another hard-coded event. This is the description of it. These are all grouped by track.',
-        comments: 'When generating a report from CREM, remember not to include this comment field-- for example, do not make it visible in the schedule book or on signage.',
-  		},
-  		{
-  			title: 'A Food Example Title',
-  			room: 'Charlevoix A',
-  			start: 'Saturday 7 pm',
-        trackuid: 'food',
-        track: 'Food',
-   			presenters: 'Norman Morgenstern, Roselyn R. Ferguson',
-        duration: '1hr',
-        type: 'workshop',
-        eventnumber: 2,
-        resources: 'plastic sheet',
-   			description: 'Example of another hard-coded event. This is the description of it.',
-        comments: '',
-  		},
-  		{
-  			title: 'A Literature Example Title',
-  			room: 'Board of Directors',
-  			start: 'Sunday 7 pm',
-        trackuid: 'literature',
-        track: 'Literature',
-   			presenters: 'Norman Morgenstern, Roselyn R. Ferguson',
-        duration: '1hr',
-        type: 'panel',
-        eventnumber: 3,
-        resources: '',
-   			description: 'Example of another hard-coded event. Grouped by track.',
-        comments: 'Ask Phylis Durna if she wants to be on this panel',
-  		},
-      {
-        title: 'A Deployment of Superpages',
-        room: 'Charlevoix C',
-        start: 'Friday 5 pm',
-        trackuid: 'tech',
-        track: 'Tech',
-        presenters: 'Lewis K. Berry',
-        duration: '1hr',
-        type: 'talk',
-        eventnumber: 4,
-        resources: 'projector',
-        description: 'Cache coherence must work. In fact, few cyberinformaticians would disagree with the analysis of voice-over-IP. AridPrawn, our new application for A* search, is the solution to all of these obstacles.',
-        comments: '',
-      },
-      {
-        title: 'A Pretend Game',
-        room: 'Lobby',
-        start: 'Saturday 11 am',
-        trackuid: 'gaming',
-        track: 'Gaming',
-        presenters: 'David Ross',
-        duration: '2hr',
-        type: 'game',
-        eventnumber: 5,
-        resources: '',
-        description: 'A pretend game as an example event.',
-        comments: 'Janet, given how loud this is, I was wondering, is there another room we can move it to? --Matt',
-      },
-      {
-        title: 'E-Commerce Deployment',
-        room: 'Board of Governors',
-        start: 'Friday 9 pm',
-        trackuid: 'tech',
-        track: 'Tech',
-        presenters: 'Paul Burtch',
-        duration: '1hr',
-        type: 'talk',
-        eventnumber: 6,
-        resources: '',
-        description: 'In recent years, much research has been devoted to the development of Internet QoS; unfortunately, few have harnessed the investigation of systems. Given the current status of amphibious algorithms, hackers worldwide compellingly desire the visualization of XML. DimVendue, our new methodology for scalable configurations, is the solution to all of these obstacles.',
-        comments: '',
-      }
-   	];
   }
 ]).directive("contenteditable", function() {
   return {
