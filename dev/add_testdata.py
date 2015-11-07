@@ -10,7 +10,7 @@ script_dir = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(script_dir, '..')))
 
 from app import db
-from app.models import Track, Event, Resource
+from app.models import Track, Event, Resource, Presenter
 
 # Delete all exsiting tracks.
 tracks = Track.query.all()
@@ -92,6 +92,12 @@ for row in csvreader:
 events_file.close()
 
 # Commit the test data to the database.
+db.session.commit()
+
+# Delete all exsiting resources.
+resources = Resource.query.all()
+for resource in resources:
+    db.session.delete(resource)
 db.session.commit()
 
 # Add resources.
