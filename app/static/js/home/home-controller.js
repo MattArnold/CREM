@@ -8,6 +8,7 @@ angular.module('CREM')
     $scope.columns = {};
     $scope.events = {};
     $scope.allTracksHidden = false;
+    $scope.allTracksShown = false;
     $scope.allColumnsHidden = false;
     $scope.orderByColumn = 'track';
 
@@ -16,6 +17,7 @@ angular.module('CREM')
         $scope.tracks[track.uid] = {};
         $scope.tracks[track.uid].uid = track.uid;
         $scope.tracks[track.uid].name = track.name;
+        $scope.tracks[track.uid].visible = false;
       });
       // TODO: When implementing authentication, set up this line to show the
       // track uid which comes before the @ in the user's penguicon.org email
@@ -92,15 +94,31 @@ angular.module('CREM')
       // 'track' in templates as a verb, so I apologize for
       // replacing it with the vague word 'item'.
       var clicked = this.item.uid;
-      var visibleTracks;
 
       $scope.tracks[clicked].visible = $scope.tracks[clicked].visible ? false : true;
 
-      // Test whether all the tracks are now hidden.
-      visibleTracks = _.find($scope.tracks, function(track) {
-        return track.visible === true;
-      });
-      $scope.allTracksHidden = visibleTracks ? false : true;
+      checkTrackVisibility();
+    };
+
+    // Either turn all tracks on, or all tracks off.
+    $scope.hideOrShowAllTracks = function() {
+
+      if ($scope.allTracksShown) {
+        _.each($scope.tracks, function(track){
+          track.visible = false;
+        });
+      } else {
+        _.each($scope.tracks, function(track){
+          track.visible = true;
+        });
+      }
+
+      checkTrackVisibility();
+    };
+
+    function checkTrackVisibility() {
+      $scope.allTracksHidden = _.every($scope.tracks, {'visible':false});
+      $scope.allTracksShown  = _.every($scope.tracks, {'visible':true});
     };
 
     tracksResponsePromise.error(function() {
