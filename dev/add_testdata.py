@@ -5,6 +5,8 @@ Inserts test data into the CREM database.
 import sys
 import os
 import csv
+import random
+random.seed()
 
 script_dir = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(script_dir, '..')))
@@ -12,11 +14,11 @@ sys.path.append(os.path.abspath(os.path.join(script_dir, '..')))
 from app import db
 from app.models import Track, Event, Resource, Presenter
 
-# Delete all exsiting tracks.
-tracks = Track.query.all()
-for track in tracks:
-    db.session.delete(track)
-db.session.commit()
+# Delete records from tables of interest.
+Track.query.delete()
+Event.query.delete()
+Resource.query.delete()
+Presenter.query.delete()
 
 # Add tracks.
 
@@ -44,11 +46,7 @@ for track_info in track_infos:
 # Commit the test data to the database.
 db.session.commit()
 
-# Delete all exsiting events.
-events = Event.query.all()
-for event in events:
-    db.session.delete(event)
-db.session.commit()
+# Add events.
 
 # The track name in TuxTrax and the corresponding name in CREM.
 tuxtrax_tracks = {
@@ -94,12 +92,6 @@ events_file.close()
 # Commit the test data to the database.
 db.session.commit()
 
-# Delete all exsiting resources.
-resources = Resource.query.all()
-for resource in resources:
-    db.session.delete(resource)
-db.session.commit()
-
 # Add resources.
 
 # For each Resource, the name, request form label and whether
@@ -115,6 +107,53 @@ resource_infos = (
 for resource_info in resource_infos:
     resource = Resource(resource_info[0], resource_info[1], resource_info[2])
     db.session.add(resource)
+
+# Commit the test data to the database.
+db.session.commit()
+
+# Add presenters.
+
+# For each presenter, their first name, last name, email address and
+# phone number.
+presenter_infos = (
+    ('Matt', 'Arnold', 'matt.mattarn@gmail.com', ''),
+    ('Kell', 'Carnahan', 'wyndsung@gmail.com', '612-720-5144'),
+    ('Jessica', 'Roland', 'theroland4@gmail.com', ''),
+    ('William', 'Pribble', 'wmpribble@gmail.com', '616-808-6123'),
+    ('Joe', 'Rapp', 'joerapp14@gmail.com', '586-894-3911'),
+    ('Melanie', 'Castle', 'disjointedimages@gmail.com', ''),
+    ('Dan', 'Johns', 'danjohns7@gmail.com', ''),
+    ('Dawn', 'Marino', 'mrsbruhaha@gmail.com', ''),
+    ('Sarah', 'Elkins', 'sarah.elkins@gmail.com', '301-613-4393'),
+    ('Jen', 'Talley', 'mimiboo9@gmail.com', '7347319771'),
+    ('cassinator', '', 'cassinator09@gmail.com', ''),
+    ('mwlauthor', '', '', ''),
+    ('Leah', 'Rapp', 'leah.rapp@gmail.com', ''),
+    ('Bob', 'Trembley', 'balroggamer@gmail.com', ''),
+    ('Kent', 'Newland', 'kentbobii@gmail.com', ''),
+    ('Angela', 'Rush', 'angierae@gmail.com', '248-505-1551'),
+    ('Brittany', 'Burke', 'brittany.burke@gmail.com', '248-259-5122'),
+    ('Stu', 'Chisholm', 'djstucrew@gmail.com', '(586) 773-6182'),
+    ('Joshua', 'DeBonis', 'josh@sortasoft.com', '203.470.7264'),
+    ('Nikita', 'Mikros', 'nik@smashworx.com', ''),
+)
+
+for presenter_info in presenter_infos:
+    presenter = Presenter(presenter_info[0], presenter_info[1])
+    presenter.email = presenter_info[2]
+    presenter.phone = presenter_info[3]
+    db.session.add(presenter)
+
+# Commit the test data to the database.
+db.session.commit()
+
+# Assign a random set of presenters to each event.
+events = Event.query.all()
+presenters = Presenter.query.all()
+for event in events:
+    # Randomly select from 0 to 4 presenters for this event.
+    random_presenters = random.sample(presenters, random.randrange(5))
+    event.presenters = random_presenters
 
 # Commit the test data to the database.
 db.session.commit()
