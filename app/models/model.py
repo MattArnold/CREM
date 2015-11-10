@@ -153,7 +153,7 @@ class Event(db.Model):
             'rooms': self.rooms,
             'event_type': self.event_type,
             'resources': self.resources,
-            'presenters': self.presenters,
+            'presenters': ['%s %s' % (presenter.first_name, presenter.last_name) for presenter in self.presenters],
             'start': self.start_dt,
             'duration': self.duration
         }
