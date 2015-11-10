@@ -12,13 +12,15 @@ script_dir = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(script_dir, '..')))
 
 from app import db
-from app.models import Track, Event, Resource, Presenter
+from app.models import Track, Event, Resource, Presenter, Room, RoomGroup
 
 # Delete records from tables of interest.
 Track.query.delete()
 Event.query.delete()
 Resource.query.delete()
 Presenter.query.delete()
+Room.query.delete()
+RoomGroup.query.delete()
 
 # Add tracks.
 
@@ -154,6 +156,63 @@ for event in events:
     # Randomly select from 0 to 4 presenters for this event.
     random_presenters = random.sample(presenters, random.randrange(5))
     event.presenters = random_presenters
+
+# Commit the test data to the database.
+db.session.commit()
+
+# Add room groups.
+
+room_group_names = (
+    'Algonquin',
+    'Charlevoix',
+    'Lobby',
+)
+
+for room_group_name in room_group_names:
+    room_group = RoomGroup(room_group_name)
+    db.session.add(room_group)
+
+# Commit the test data to the database.
+db.session.commit()
+
+# Add rooms.
+
+# For each room, the name, square feet, capacity and room group it belongs to.
+room_infos = (
+    ('Algonquin A', 1207, 100, 'Algonquin'),
+    ('Algonquin B', 1207, 100, 'Algonquin'),
+    ('Algonquin C', 1207, 100, 'Algonquin'),
+    ('Algonquin D', 1207, 100, 'Algonquin'),
+    ('Algonquin Foyer', 3000, 450, None),
+    ('Charlevoix A', 756, 64, 'Charlevoix'),
+    ('Charlevoix B', 756, 64, 'Charlevoix'),
+    ('Charlevoix C', 756, 64, 'Charlevoix'),
+    ('Portage Auditorium', 1439, 68, None),
+    ('Windover', 1475, 40, None),
+    ('TC Linguinis', 1930, 40, None),
+    ('Baldwin Board Room', 431, 12, None),
+    ('Board of Directors', 511, 15, None),
+    ('Board of Governors', 391, 5, None),
+    ('Board of Regents', 439, 15, None),
+    ('Board of Trustees', 534, 40, None),
+    ('Hamlin', 360, 25, None),
+    ('Montcalm', 665, 50, None),
+    ('Nicolet', 667, 50, None),
+    ('Game Table A', 20, 10, 'Lobby'),
+    ('Game Table B', 20, 10, 'Lobby'),
+    ('Game Table C', 20, 10, 'Lobby'),
+    ('Game Table D', 20, 10, 'Lobby'),
+)
+
+for room_info in room_infos:
+    room = Room()
+    room.room_name = room_info[0]
+    room.room_sq_ft = room_info[1]
+    room.room_capacity = room_info[2]
+    if room_info[3]:
+        room.room_group = db.session.query(RoomGroup).\
+            filter(RoomGroup.room_group_name == room_info[3]).first()
+    db.session.add(room)
 
 # Commit the test data to the database.
 db.session.commit()
