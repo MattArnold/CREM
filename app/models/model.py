@@ -143,6 +143,11 @@ class Event(db.Model):
 
     @property
     def useroutput(self):
+        presenter_list = []
+        for presenter in self.presenters:
+            presenter_name = ('%s %s' % (presenter.first_name,
+                                         presenter.last_name)).strip()
+            presenter_list.append(presenter_name)
         return {
             'eventnumber': self.id,
             'title': self.title,
@@ -153,7 +158,7 @@ class Event(db.Model):
             'rooms': self.rooms,
             'event_type': self.event_type,
             'resources': self.resources,
-            'presenters': ['%s %s' % (presenter.first_name, presenter.last_name) for presenter in self.presenters],
+            'presenters': ', '.join(presenter_list),
             'start': self.start_dt,
             'duration': self.duration
         }
