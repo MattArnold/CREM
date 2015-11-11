@@ -10,7 +10,8 @@
     "bootstrap-css": "~3.0.0",
     "jquery": "~2.1.0",
     "lodash": "~3.10.1",
-    "angular-toArrayFilter": "~1.0.1"
+    "angular-toArrayFilter": "~1.0.1",
+    "angular-loading-bar": "*"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.13",
