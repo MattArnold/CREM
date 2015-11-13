@@ -30,7 +30,7 @@ This will do two things. First it will create a Python virtual environment calle
 
 The second thing will be to run `bower install` which will install a folder `app/static/lib` full of Javascript third-party dependencies.
 
-Avoid committing the two above directories, which are created by this process. Open `CREM/.git/info/include` which determines which files Git will ignore. Paste in this pattern:
+Avoid committing the two above directories, which are created by this process. Open `CREM/.git/info/exclude` which determines which files Git will ignore. Paste in this pattern:
 
 ```
 app/static/lib/
