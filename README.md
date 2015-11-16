@@ -23,7 +23,7 @@ Then use this on the command line for node package manager (npm) to install bowe
 
 ##Installation
 
-In the project directory, execute `install.sh` or `install.bat` depending on your operating system. This step only needs to be
+In the project directory, execute `./install.sh` (on Mac or Linux), or `install.bat` (on Windows). This step only needs to be
 performed once.
 
 This will do two things. First it will create a Python virtual environment called *venv* and install a version of Python in it.
