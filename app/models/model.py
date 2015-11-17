@@ -132,8 +132,9 @@ class Event(db.Model):
         backref=db.backref('at_event'),
         passive_deletes=True
     )
-    start_dt = db.Column(db.DateTime)
-    duration = db.Column(db.Integer)    # The number of intervals.
+    timeslot_id = db.Column(db.Integer, db.ForeignKey('timeslot.id'))
+    timeslot = db.relationship('Timeslot')
+    duration = db.Column(db.Integer)  # The number of timeslots.
     convention_id = db.Column(db.Integer, db.ForeignKey('convention.id'))
     convention = db.relationship('Convention')
     fixed = db.Column(db.Boolean())
@@ -148,6 +149,16 @@ class Event(db.Model):
             presenter_name = ('%s %s' % (presenter.first_name,
                                          presenter.last_name)).strip()
             presenter_list.append(presenter_name)
+
+        # Create the string representing the start datetime.
+        timeslot_duration = self.convention.timeslot_duration
+        timeslot_index = self.timeslot.timeslot_index
+        start_dt = self.convention.start_dt + timeslot_duration * timeslot_index
+        if self.convention.datetime_format:
+            start_dt_str = start_dt.strftime(self.convention.datetime_format)
+        else:
+            start_dt_str = start_dt.strftime('%m/%d/%Y %I:%M %p')
+
         return {
             'eventnumber': self.id,
             'title': self.title,
@@ -159,7 +170,7 @@ class Event(db.Model):
             'event_type': self.event_type,
             'resources': self.resources,
             'presenters': ', '.join(presenter_list),
-            'start': self.start_dt,
+            'start': start_dt_str,
             'duration': self.duration
         }
 
@@ -257,6 +268,8 @@ class Convention(db.Model):
     description = db.Column(db.Text)
     start_dt = db.Column(db.DateTime)
     end_dt = db.Column(db.DateTime)
+    date_format = db.Column(db.String(50))
+    datetime_format = db.Column(db.String(50))
     url = db.Column(db.String())
     timeslot_duration = db.Column(db.Interval())
     active = db.Column(db.Boolean(), default=True)
@@ -266,7 +279,9 @@ class Convention(db.Model):
 
 
 class Timeslot(db.Model):
+    __tablename__ = 'timeslot'
     id = db.Column(db.Integer(), primary_key=True)
+    timeslot_index = db.Column(db.Integer(), unique=True)  # 0-based.
     name = db.Column(db.String())
     convention_id = db.Column(
         db.Integer(),
@@ -274,6 +289,8 @@ class Timeslot(db.Model):
     )
     convention = db.relationship('Convention',
                                  backref=db.backref('timeslots'))
-    start_dt = db.Column(db.DateTime())
     rsvp_conflicts = db.Column(db.Integer())
     active = db.Column(db.Boolean(), default=True)
+
+    def __init__(self, timeslot_index):
+        self.timeslot_index = timeslot_index

@@ -5,6 +5,7 @@ Inserts test data into the CREM database.
 import sys
 import os
 import csv
+import datetime
 import random
 random.seed()
 
@@ -12,15 +13,48 @@ script_dir = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(script_dir, '..')))
 
 from app import db
+from app.models import Convention, Timeslot
 from app.models import Track, Event, Resource, Presenter, Room, RoomGroup
 
 # Delete records from tables of interest.
+Convention.query.delete()
+Timeslot.query.delete()
 Track.query.delete()
 Event.query.delete()
 Resource.query.delete()
 Presenter.query.delete()
 Room.query.delete()
 RoomGroup.query.delete()
+
+# Define the convention.
+
+convention = Convention()
+convention.name = 'Con One'
+convention.description = 'The first and only convention you should attend!'
+convention.start_dt = datetime.datetime(2016, 4, 29, 16)
+convention.end_dt = datetime.datetime(2016, 5, 1, 13)
+convention.timeslot_duration = datetime.timedelta(0, 3600)  # one hour.
+convention.date_format = '%m/%d/%Y'
+convention.datetime_format = '%m/%d/%Y %I:%M %p'
+convention.url = 'http://con1.invalid'
+convention.active = True
+db.session.add(convention)
+db.session.commit()
+
+# Commit the test data to the database.
+db.session.commit()
+
+# Create timeslots.
+timeslot_count = int((convention.end_dt - convention.start_dt).total_seconds() /
+                     convention.timeslot_duration.total_seconds())
+for n in range(timeslot_count):
+    timeslot = Timeslot(n)
+    timeslot.convention = convention
+    timeslot.active = True
+    db.session.add(timeslot)
+
+# Commit the test data to the database.
+db.session.commit()
 
 # Add tracks.
 
@@ -88,6 +122,13 @@ for row in csvreader:
         filter(Track.name == track_name).first()
     event.duration = int(row[3])
     event.failityRequest = row[4]
+    event.convention = convention
+
+    # Assign a random timeslot.
+    timeslot_index = random.randint(0, timeslot_count-1)
+    timeslot = Timeslot.query.filter_by(timeslot_index=timeslot_index).first()
+    event.timeslot = timeslot
+
     db.session.add(event)
 events_file.close()
 
