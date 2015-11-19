@@ -21,6 +21,11 @@ To develop for this project, you will need `node`, `grunt`, and `bower`. Downloa
 
 Then use this on the command line for node package manager (npm) to install bower and grunt: `npm install -g bower grunt-cli`
 
+**Note:** If you install `node` from a repository, it may be installed as `nodejs` rather than `node`, which will cause
+problems with subsequent steps in this procedure. To make sure that the `node` command will work correctly, enter the command
+`node --help`. You should see options for running `node`. If instead you see an error indicating that the command was not found, you will need
+to create a symbolic link from `node` to `nodejs`. (The steps to do this depend on your operating system.)
+
 ##Installation
 
 In the project directory, execute `./install.sh` (on Mac or Linux), or `install.bat` (on Windows). This step only needs to be
