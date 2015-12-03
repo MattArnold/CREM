@@ -11,7 +11,7 @@ def root():
 
 @app.route('/admin')
 def adminPage():
-    return app.send_static_file('admin.html')
+    return app.send_static_file('/views/admin.html')
 
 @app.route('/tracks.json')
 def tracks():

@@ -6,7 +6,7 @@ angular.module('CREM', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date', 'ang
         templateUrl: 'views/home/home.html',
         controller: 'HomeController'})
       .when('/admin', {
-        templateUrl: 'views/home/admin.html',
+        templateUrl: 'views/admin/admin.html',
         controller: 'AdminController'})
       .otherwise({redirectTo: '/'});
   }]);

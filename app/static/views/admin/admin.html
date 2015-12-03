@@ -1,48 +1,112 @@
-<!doctype html>
-<html lang="en" ng-app="CREM">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CREM Admin</title>
-  <link href="lib/bootstrap-css/css/bootstrap.css" rel="stylesheet">
-  <link href="lib/jquery-ui/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
-  <link href="css/app.css" rel="stylesheet">
-</head>
-<body>
- <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-   <div class="container">
-     <div class="navbar-header">
-       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-         <span class="sr-only">Toggle navigation</span>
-         <span class="icon-bar"></span>
-         <span class="icon-bar"></span>
-         <span class="icon-bar"></span>
-       </button>
-       <a class="navbar-brand" href="#">CREM Admin</a>
-     </div>
-
-     <!-- Collect the nav links, forms, and other content for toggling -->
-     <div class="collapse navbar-collapse navbar-ex1-collapse">
-       <ul class="nav navbar-nav">
-       </ul>
-     </div>
-     <!-- /.navbar-collapse -->
-   </div>
-   <!-- /.container -->
-  </nav>
-  <div class="container" ng-view></div>
-  <script src="lib/jquery/dist/jquery.js"></script>
-  <script src="lib/jquery-ui/jquery-ui.js"></script>
-  <script src="lib/lodash/dist/lodash.js"></script>
-  <script src="lib/angular/angular.js"></script>
-  <script src="lib/angular-resource/angular-resource.js"></script>
-  <script src="lib/angular-route/angular-route.js"></script>
-  <script src="lib/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-  <script src="lib/angular-ui-date/src/date.js"></script>
-
-  <script src="js/app.js"></script>
-  <script src="js/home/home-controller.js"></script>
-  
-</body>
-</html>
+<div class="container-fluid" ng-controller="AdminController">
+  <div class="page-header">
+    <h1>Configure This Convention</h1>
+  </div>
+  <div class="container">
+    <form>
+    <div class="panel panel-default">
+      <div class="panel-body input-group">
+        <div class="col-md-6">
+          <label for="convention_name" >Convention Name</label>
+          <input type="text" id="convention_name" class="form-control" ng-model="convention_name" />
+        </div>
+        <div class="col-md-6 text-muted">
+          For example, instead of just "Genericon", use "Genericon 2016" or "Genericon 25" or "Return Of Genericon".
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="row">
+        <div class="col-md-4">
+          <label for="start_dt">First Day Of The Convention</label>
+          <datepicker id="start_dt" ng-model="convention_start_date" ></datepicker>
+        </div>
+        <div class="col-md-3">
+          <label for="start_time">Start Time Of The Convention</label>
+          <select id="start_time" ng-model="convention_start_time" class="form-control">
+            <ng-option
+            <option value="12 AM">12 AM</option>
+            <option value="1 AM">1 AM</option>
+            <option value="2 AM">2 AM</option>
+            <option value="3 AM">3 AM</option>
+            <option value="4 AM">4 AM</option>
+            <option value="5 AM">5 AM</option>
+            <option value="6 AM">6 AM</option>
+            <option value="7 AM">7 AM</option>
+            <option value="8 AM">8 AM</option>
+            <option value="9 AM">9 AM</option>
+            <option value="10 AM">10 AM</option>
+            <option value="11 AM">11 AM</option>
+            <option value="12 PM">12 PM</option>
+            <option value="1 PM">1 PM</option>
+            <option value="2 PM">2 PM</option>
+            <option value="3 PM">3 PM</option>
+            <option value="4 PM">4 PM</option>
+            <option value="5 PM">5 PM</option>
+            <option value="6 PM">6 PM</option>
+            <option value="7 PM">7 PM</option>
+            <option value="8 PM">8 PM</option>
+            <option value="9 PM">9 PM</option>
+            <option value="10 PM">10 PM</option>
+            <option value="11 PM">11 PM</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="timeslot-length-btn">
+            Length Of Timeslots
+          </label>
+          <input type="text" class="form-control" aria-describedby="add-room-btn" ng-model="timeslot_length">
+        </div>
+        <div class="col-md-2">
+          <label for="timeslot-length-btn">
+            Number Of Timeslots
+          </label>
+          <input type="text" class="form-control" aria-describedby="add-room-btn" ng-model="timeslot_length">
+        </div>
+        <div class="col-md-8">
+          <label for="convention-end">
+            Convention Ends At:
+          </label>
+          <div class="alert alert-info">
+            {{convention_end_date}} {{convention_end_date}}
+          </div>
+          <div class="text-muted">
+            <small>Think hard before changing these time settings after entering events in the system. They will retain their sequence relative to each other, and will remain the same number of timeslots from the start of the convention.  This will result in them moving forward or backward in time. If you reduce the number of timeslots, every event which had been scheduled during the deleted timeslots will no longer have a time or duration.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <label>Rooms</label>
+        <div class="input-group">
+          <input type="text" class="form-control" aria-describedby="add-room-btn">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="add-room-btn">+</button>
+          </span>
+        </div>
+        <div ng-repeat="room in rooms" ng-class-odd="'odd'" ng-class-even="'even'" class="col-sm-4 col-md-4 col-lg-4" value="{{room.name}}">
+          {{room.name}}
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <label>Tracks</label>
+        <div class="input-group">
+          <input type="text" class="form-control" aria-describedby="add-track-btn">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="add-track-btn">+</button>
+          </span>
+        </div>
+        <div ng-repeat="track in tracks" ng-class-odd="'odd'" ng-class-even="'even'" class="col-sm-4 col-md-4 col-lg-4" value="{{track.name}}">
+          {{track.name}}
+        </div>
+      </div>
+    </div>
+    </form>      
+    </div>
+  </div>
+</div>
