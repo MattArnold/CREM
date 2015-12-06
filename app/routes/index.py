@@ -1,6 +1,6 @@
 from app import app
 from app import db
-from app.models import Event, Track
+from app.models import Event, Track, Room, RoomGroup
 from flask import jsonify
 import json
 
@@ -39,3 +39,17 @@ def columns():
 def events():
     eventlist = Event.query.all()
     return jsonify(eventlist = [i.useroutput for i in eventlist])
+
+@app.route('/rooms.json')
+def rooms():
+    roomlist = Room.query.all()
+    return jsonify(
+        rooms = [i.ui_rooms for i in roomlist]
+        )
+
+@app.route('/room_groups.json')
+def room():
+    roomgrouplist = RoomGroup.query.all()
+    return jsonify(
+        room_groups = [i.ui_room_groups for i in roomgrouplist],
+        )

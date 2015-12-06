@@ -1,4 +1,4 @@
-<div class="container-fluid" ng-controller="AdminController">
+<div class="container-fluid">
   <div class="page-header">
     <h1>Configure This Convention</h1>
   </div>
@@ -84,14 +84,51 @@
     <div class="panel panel-default">
       <div class="panel-body">
         <label>Rooms</label>
-        <div class="input-group">
-          <input type="text" class="form-control" aria-describedby="add-room-btn">
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="button" id="add-room-btn">+</button>
-          </span>
+        <div class="row">
+          <div class="col-md-4 input-group">
+            <label for="room_name">New Room Name: </label>
+            <input type="text" id="room_name" name="room_name">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" id="add-room-btn">+</button>
+            </span>
+          </div>
         </div>
-        <div ng-repeat="room in rooms" ng-class-odd="'odd'" ng-class-even="'even'" class="col-sm-4 col-md-4 col-lg-4" value="{{room.name}}">
-          {{room.name}}
+        <div class="row">
+          <div class="col-md-3">
+            <label>Room Name</label>
+          </div>
+          <div class="col-md-3">
+            <label>Capacity</label>
+          </div>
+          <div class="col-md-3">
+            <label>Sq Ft</label>
+          </div>
+          <div class="col-md-3">
+            <label>Room Group</label>
+          </div>
+        </div>
+        <div ng-repeat="room in rooms | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
+          <div class="col-md-3">
+            {{room.name}}
+          </div>
+          <div class="col-md-3">
+            {{room.capacity}}
+          </div>
+          <div class="col-md-3">
+            {{room.sq_ft}}
+          </div>
+          <div class="col-md-3">
+            {{room.group_id}}
+          </div>
+        </div>
+            <label>Room Groups</label>
+        <div ng-repeat="room_group in room_groups | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
+          <div class="col-md-3">
+            {{room_group.name}}
+          </div>
+          <div class="col-md-3">
+            id #: {{room_group.id}}
+          </div>
         </div>
       </div>
     </div>

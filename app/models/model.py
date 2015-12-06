@@ -248,6 +248,18 @@ class Room(db.Model):
     def __repr__(self):
         return 'Room: %s' % self.room_name
 
+    @property
+    def ui_rooms(self):
+        return {
+            'id': self.id,
+            'name': self.room_name,
+            'sq_ft': self.room_sq_ft,
+            'capacity': self.room_capacity,
+            'group_id': self.room_group_id,
+            'suitable_events': self.suitable_events,
+            'available_timeslots': self.available_timeslots
+        }
+
 
 class RoomGroup(db.Model):
     __tablename__ = 'room_group'
@@ -259,6 +271,13 @@ class RoomGroup(db.Model):
 
     def __repr__(self):
         return 'Room Group: %s' % self.room_group_name
+
+    @property
+    def ui_room_groups(self):
+        return {
+            'id': self.id,
+            'group_name': self.room_group_name,
+        }
 
 
 class Convention(db.Model):
