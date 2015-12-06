@@ -28,6 +28,8 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', functio
         $scope.rooms[room.id].id = room.id;
         $scope.rooms[room.id].name = room.name;
         $scope.rooms[room.id].group_id = room.group_id;
+        $scope.rooms[room.id].sq_ft = room.sq_ft;
+        $scope.rooms[room.id].capacity = room.capacity;
       });
     });
 
