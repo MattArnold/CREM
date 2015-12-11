@@ -296,6 +296,14 @@ class Convention(db.Model):
     def __repr__(self):
         return self.name
 
+    @property
+    def configs(self):
+        return {
+            'name': self.name,
+            'start_dt': str(self.start_dt),
+            'end_dt': str(self.end_dt),
+            'timeslot_length': int(self.timeslot_duration.total_seconds() / 60),
+        }
 
 class Timeslot(db.Model):
     __tablename__ = 'timeslot'
@@ -313,3 +321,5 @@ class Timeslot(db.Model):
 
     def __init__(self, timeslot_index):
         self.timeslot_index = timeslot_index
+
+    

@@ -1,6 +1,6 @@
 from app import app
 from app import db
-from app.models import Event, Track, Room, RoomGroup
+from app.models import Convention, Event, Track, Room, RoomGroup, Timeslot
 from flask import jsonify
 import json
 
@@ -12,6 +12,16 @@ def root():
 @app.route('/admin')
 def adminPage():
     return app.send_static_file('/views/admin.html')
+
+@app.route('/convention.json')
+def convention():
+    conventions = Convention.query.all()
+    return jsonify(configs = [i.configs for i in conventions])
+
+@app.route('/number_of_timeslots.json')
+def number_of_timeslots():
+    number_of_timeslots = Timeslot.query.count()
+    return jsonify(number_of_timeslots = number_of_timeslots)
 
 @app.route('/tracks.json')
 def tracks():
