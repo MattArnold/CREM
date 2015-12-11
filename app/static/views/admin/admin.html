@@ -20,11 +20,11 @@
         <div class="row">
         <div class="col-md-4 col-sm-4">
           <label for="start_dt">First Day Of The Convention</label>
-          <datepicker id="start_dt" ng-model="convention_start_day" ></datepicker>
+          <datepicker id="start_dt" ng-model="convention_start_day" ng-change="calculateEnd()"></datepicker>
         </div>
         <div class="col-md-3 col-sm-4">
           <label for="start_time">Start Time Of The Convention</label>
-          <select id="start_time" ng-model="convention_start_time" class="form-control">
+          <select id="start_time" ng-model="convention_start_time" class="form-control" ng-change="calculateEnd()">
             <ng-option
             <option value="0">12 AM</option>
             <option value="1">1 AM</option>
@@ -57,7 +57,7 @@
             Length Of Timeslots
           </label>
           <div class="input-group">
-            <input type="text" id="timeslot-length" class="form-control" ng-model="timeslot_length" aria-describedby="minutes-addon">
+            <input type="text" id="timeslot-length" class="form-control" ng-model="timeslot_length" aria-describedby="minutes-addon" ng-change="calculateEnd()">
             <span class="input-group-addon" id="minutes-addon">minutes</span>
           </div>
         </div>
@@ -65,14 +65,14 @@
           <label for="timeslot-length-btn">
             Number Of Timeslots
           </label>
-          <input type="text" class="form-control" ng-model="number_of_timeslots">
+          <input type="text" class="form-control" ng-model="number_of_timeslots" ng-change="calculateEnd()">
         </div>
         <div class="col-md-8">
           <label for="convention-end">
             Convention Ends At:
           </label>
           <div class="alert alert-info">
-            
+            {{convention_end_day}}, {{convention_end_time}}
           </div>
           <div class="text-muted">
             <p class="col-md-6"><small>Think hard before changing these time settings after entering events in the system. Events will retain their sequence relative to each other.</small></p>

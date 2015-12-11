@@ -3,9 +3,7 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', functio
   $scope.convention_name;
   $scope.convention_start_dt = new Date();
   $scope.convention_start_day;
-  $scope.convention_end_day;
   $scope.convention_start_time;
-  $scope.convention_end_time;
   $scope.timeslot_length;
   var conventionResponsePromise = $http.get('/convention.json');
   conventionResponsePromise.success(function(data) {
@@ -19,12 +17,14 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', functio
     $scope.convention_start_time = hours;
     $scope.convention_name = data.configs[0].name;
     $scope.timeslot_length = data.configs[0].timeslot_length;
+    $scope.calculateEnd();
   });
 
   $scope.number_of_timeslots;
   var numberOfTimeslotsResponsePromise = $http.get('/number_of_timeslots.json');
   numberOfTimeslotsResponsePromise.success(function(data) {
     $scope.number_of_timeslots = data.number_of_timeslots;
+    $scope.calculateEnd();
   });
 
   $scope.tracks = {};
@@ -63,5 +63,32 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', functio
       $scope.room_groups[room_group.id].name = room_group.group_name;
     });
   });
+
+  $scope.convention_end_dt;
+  $scope.convention_end_day;
+  $scope.convention_end_time;
+  $scope.calculateEnd = function() {
+    var new_start_dt = new Date($scope.convention_start_day);
+    new_start_dt.setHours($scope.convention_start_time);
+    var con_duration = $scope.timeslot_length * $scope.number_of_timeslots;
+    var end_dt = new Date(new_start_dt.getTime() + con_duration * 60000);
+    var year, month, day, hours, meridiem;
+    year = end_dt.getFullYear();
+    month = end_dt.getMonth()+1;
+
+    day = end_dt.getDate();
+    $scope.convention_end_day = month + '/' + day + ', ' + year;
+
+    hours = end_dt.getHours();
+    meridiem = " AM";
+    if (hours >= 12) {
+      hours = hours - 12;
+      meridiem = " PM";
+    }
+    if (hours === 0) {
+      hours = 12;
+    }
+    $scope.convention_end_time = hours + meridiem;
+  }
 
 }])
