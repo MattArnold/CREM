@@ -63,3 +63,38 @@ def room():
     return jsonify(
         room_groups = [i.ui_room_groups for i in roomgrouplist],
         )
+
+@app.route('/configs.json')
+def combined_info():
+    convention = Convention.query.first()
+    number_of_timeslots = Timeslot.query.count()
+    tracks = Track.query.all()
+    rooms = Room.query.all()
+    room_groups = RoomGroup.query.all()
+    return jsonify(
+        {
+            "convention": {
+                "name": convention.name,
+                "start_dt": convention.start_dt.strftime(convention.datetime_format),
+                "timeslot_length": int(convention.timeslot_duration.total_seconds()/60),
+                "number_of_timeslots": number_of_timeslots
+            },
+            "tracks": [i.names for i in tracks],
+            "rooms": [{"name": i.room_name,
+                       "capacity": i.room_capacity,
+                       "sq_ft": i.room_sq_ft,
+                       "group_id": i.room_group_id,
+                       "id": i.id,
+                       "available_timeslots": [{"name": j.name,
+                                                "index": j.timeslot_index
+                                                }
+                                               for j in i.available_timeslots],
+                       "suitable_events": [{"id": j.id,
+                                            "title": j.title
+                                            }
+                                           for j in i.suitable_events]
+                       }
+                      for i in rooms],
+            "room_groups": [i.ui_room_groups for i in room_groups]
+        }
+    )
