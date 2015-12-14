@@ -4,10 +4,13 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
   $scope.new_room = {};
   $scope.new_room_group = {};
 
+  // Whenever the config data in Angular changes, immediately save
+  // it to the browser's local storage.
   $scope.$watch('configs', function() {
     localStorageService.set('configs', $scope.configs);
   }, true);
 
+  // Load the configs from the browser's local storage.
   var storedConfigs = localStorageService.get('configs');
   $scope.configs = storedConfigs || undefined;
 
@@ -37,6 +40,8 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
     });
   }
 
+  // If there is no local storage, or if any configs are missing
+  // in local storage, make an AJAX call to get it from the db.
   if (!allConfigsExist) {
 
     console.log('AJAX');
