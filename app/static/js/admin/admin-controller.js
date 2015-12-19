@@ -114,6 +114,12 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
       hours = 12;
     }
     $scope.configs.end_time = hours + meridiem;
+    var newyear, newmonth, newday, newhours;
+    newyear = new_start_dt.getFullYear();
+    newmonth = new_start_dt.getDate();
+    newday = new_start_dt.getDay();
+    newhours = new_start_dt.getHours();
+    $scope.configs.start_dt = newyear + '-' + newmonth + '-' + newday + 'T:' + newhours;
   }
 
   $scope.saveConfigsToDB = function() {
