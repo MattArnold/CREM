@@ -117,7 +117,7 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
     var newyear, newmonth, newday, newhours;
     newyear = new_start_dt.getFullYear();
     newmonth = new_start_dt.getMonth()+1;
-    newday = new_start_dt.getDay();
+    newday = new_start_dt.getDate();
     newhours = new_start_dt.getHours();
     $scope.configs.start_dt = newyear + '-' + newmonth + '-' + newday + 'T:' + newhours;
   }
