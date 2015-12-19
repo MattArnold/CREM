@@ -3,12 +3,25 @@
     <h1>Configure This Convention</h1>
   </div>
   <div class="container">
-    <form>
+    <form ng-submit="saveConfigsToDB()">
+    <div class="row well">
+      <div class="col-md-8">
+        This is an access-restricted page. It defines the structure of the convention: function space, topic tracks, and this system's users. Configs are normally set only once, before any events are entered in this system.
+      </div>
+      <div class="col-md-2">
+        Edits to this page are not applied until you press this button.
+      </div>
+      <div class="col-md-2">
+        <button id="submit" type="button" class="btn btn-primary" ng-click="saveConfigsToDB()">
+          Save All Configs
+        </button>
+      </div>
+    </div>
     <div class="panel panel-default">
       <div class="panel-body input-group">
         <div class="col-md-6">
-          <label for="convention_name" >Convention Name</label>
-          <input type="text" id="convention_name" class="form-control" ng-model="convention_name" />
+          <label for="con-name" >Convention Name</label>
+          <input type="text" id="con-name" class="form-control" ng-model="configs.name" />
         </div>
         <div class="col-md-6 text-muted">
           For example, instead of just "Genericon", use "Genericon 2016" or "Genericon 25" or "Return Of Genericon".
@@ -20,11 +33,11 @@
         <div class="row">
         <div class="col-md-4 col-sm-4">
           <label for="start_dt">First Day Of The Convention</label>
-          <datepicker id="start_dt" ng-model="convention_start_day" ng-change="calculateEnd()"></datepicker>
+          <datepicker id="start_dt" ng-model="configs.start_day" ng-change="calculateEnd()"></datepicker>
         </div>
         <div class="col-md-3 col-sm-4">
           <label for="start_time">Start Time Of The Convention</label>
-          <select id="start_time" ng-model="convention_start_time" class="form-control" ng-change="calculateEnd()">
+          <select id="start_time" ng-model="configs.start_time" class="form-control" ng-change="calculateEnd()">
             <ng-option
             <option value="0">12 AM</option>
             <option value="1">1 AM</option>
@@ -57,7 +70,7 @@
             Length Of Timeslots
           </label>
           <div class="input-group">
-            <input type="text" id="timeslot-length" class="form-control" ng-model="timeslot_length" aria-describedby="minutes-addon" ng-change="calculateEnd()">
+            <input type="text" id="timeslot-length" class="form-control" ng-model="configs.timeslot_length" aria-describedby="minutes-addon" ng-change="calculateEnd()">
             <span class="input-group-addon" id="minutes-addon">minutes</span>
           </div>
         </div>
@@ -65,14 +78,14 @@
           <label for="number-of-timeslots">
             Number Of Timeslots
           </label>
-          <input type="text" id="number-of-timeslots" class="form-control" ng-model="number_of_timeslots" ng-change="calculateEnd()">
+          <input type="text" id="number-of-timeslots" class="form-control" ng-model="configs.number_of_timeslots" ng-change="calculateEnd()">
         </div>
         <div class="col-md-8">
-          <label for="convention-end">
+          <label for="con-end">
             Convention Ends At:
           </label>
-          <div class="alert alert-info">
-            {{convention_end_day}}, {{convention_end_time}}
+          <div class="alert alert-info" id="con-end">
+            {{configs.end_day}}, {{configs.end_time}}
           </div>
           <div class="text-muted">
             <p class="col-md-6"><small>Think hard before changing these time settings after entering events in the system. Events will retain their sequence relative to each other.</small></p>
@@ -89,8 +102,8 @@
         <label>Rooms</label>
         <div class="row">
           <div class="col-md-4 input-group">
-            <label for="room_name">New Room Name: </label>
-            <input type="text" id="room_name" name="room_name">
+            <label for="room-name">New Room Name: </label>
+            <input type="text" id="room-name" name="room-name">
             <span class="input-group-btn">
               <button class="btn btn-default" type="button" id="add-room-btn">+</button>
             </span>
@@ -110,7 +123,7 @@
             <label>Room Group</label>
           </div>
         </div>
-        <div ng-repeat="room in rooms | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
+        <div ng-repeat="room in configs.rooms | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
           <div class="col-md-3">
             {{room.name}}
           </div>
@@ -125,7 +138,7 @@
           </div>
         </div>
             <label>Room Groups</label>
-        <div ng-repeat="room_group in room_groups | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
+        <div ng-repeat="room_group in configs.room_groups | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
           <div class="col-md-3">
             {{room_group.name}}
           </div>
@@ -144,12 +157,12 @@
             <button class="btn btn-default" type="button" id="add-track-btn">+</button>
           </span>
         </div>
-        <div ng-repeat="track in tracks" ng-class-odd="'odd'" ng-class-even="'even'" class="col-sm-4 col-md-4 col-lg-4" value="{{track.name}}">
+        <div ng-repeat="track in configs.tracks" ng-class-odd="'odd'" ng-class-even="'even'" class="col-sm-4 col-md-4 col-lg-4" value="{{track.name}}">
           {{track.name}}
         </div>
       </div>
     </div>
-    </form>      
+    </form>
     </div>
   </div>
 </div>

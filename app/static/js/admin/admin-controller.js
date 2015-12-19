@@ -34,7 +34,6 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
 
     angular.forEach(configsChecklist, function(config){
       if (!$scope.configs[config]){
-        console.log(config);
         allConfigsExist = false;
       }
     });
@@ -115,6 +114,27 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
       hours = 12;
     }
     $scope.configs.end_time = hours + meridiem;
+  }
+
+  $scope.saveConfigsToDB = function() {
+    var req = {
+      method: 'POST',
+      url: '/convention.json',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: {
+          'name': $scope.configs.name,
+          'start_dt': $scope.configs.start_dt,
+          'timeslot_length': $scope.configs.timeslot_length,
+        }
+    }
+
+    $http(req).then(function(){
+      console.log('success', req);
+    }, function(){
+      console.log('failure', req);
+    });
   }
 
 }])
