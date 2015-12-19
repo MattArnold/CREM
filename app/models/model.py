@@ -291,6 +291,7 @@ class Convention(db.Model):
     datetime_format = db.Column(db.String(50))
     url = db.Column(db.String())
     timeslot_duration = db.Column(db.Interval())
+    number_of_timeslots = db.Column(db.Integer)
     active = db.Column(db.Boolean(), default=True)
 
     def __repr__(self):
@@ -303,6 +304,7 @@ class Convention(db.Model):
             'start_dt': str(self.start_dt),
             'end_dt': str(self.end_dt),
             'timeslot_length': int(self.timeslot_duration.total_seconds() / 60),
+            'number_of_timeslots': self.number_of_timeslots,
         }
 
 class Timeslot(db.Model):

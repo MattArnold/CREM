@@ -56,6 +56,8 @@ def convention():
         # Convert the timeslot length from minutes to a timedelta object.
         convention.timeslot_length = datetime.timedelta(0, int(content['timeslot_length']) * 60)
 
+        convention.number_of_timeslots = content['number_of_timeslots']
+
         # Update the database.
         try:
             db.session.add(convention)
@@ -113,7 +115,6 @@ def room():
 @app.route('/configs.json')
 def combined_info():
     convention = Convention.query.first()
-    number_of_timeslots = Timeslot.query.count()
     tracks = Track.query.all()
     rooms = Room.query.all()
     room_groups = RoomGroup.query.all()
@@ -123,7 +124,7 @@ def combined_info():
                 "name": convention.name,
                 "start_dt": convention.start_dt.strftime(convention.datetime_format),
                 "timeslot_length": int(convention.timeslot_duration.total_seconds()/60),
-                "number_of_timeslots": number_of_timeslots
+                "number_of_timeslots": convention.number_of_timeslots,
             },
             "tracks": [i.names for i in tracks],
             "rooms": [{"name": i.room_name,

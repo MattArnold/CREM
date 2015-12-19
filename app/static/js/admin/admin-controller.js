@@ -133,6 +133,7 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
           'name': $scope.configs.name,
           'start_dt': $scope.configs.start_dt,
           'timeslot_length': $scope.configs.timeslot_length,
+          'number_of_timeslots': $scope.configs.number_of_timeslots,
         }
     }
 
