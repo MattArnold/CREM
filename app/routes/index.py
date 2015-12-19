@@ -4,26 +4,26 @@ from app.models import Convention, Event, Track, Room, RoomGroup, Timeslot
 from flask import jsonify, request
 import json
 from sqlalchemy.orm.exc import MultipleResultsFound
+from sqlalchemy.exc import SQLAlchemyError
 import datetime
 
 def jsdate2py(s):
     """
-    Converts a string in JavaScript datetime format to a Python datetime
-    object. An example of such is string is:
+    Converts a string to a Python datetime object. Returns None if the string
+    cannot be converted. An example of the string is:
 
-    2016-04-29T20:00:00.000Z
+    2016-4-29T:20
     """
-    parts = s.strip().split('T')
-    dateparts = parts[0].split('-')
-    timeparts = parts[1].split(':')
-    year = int(dateparts[0])
-    month = int(dateparts[1])
-    day = int(dateparts[2])
-    hour = int(timeparts[0])
-    minute = int(timeparts[1])
-    secondparts = timeparts[2].split('.')
-    second = int(secondparts[0])
-    return datetime.datetime(year, month, day, hour, minute, second)
+    try:
+        parts = s.strip().split('T:')
+        dateparts = parts[0].split('-')
+        year = int(dateparts[0])
+        month = int(dateparts[1])
+        day = int(dateparts[2])
+        hour = int(parts[1])
+    except Exception:
+        return None
+    return datetime.datetime(year, month, day, hour, 0, 0)
 
 @app.route('/')
 def root():
@@ -40,18 +40,29 @@ def convention():
         return jsonify(configs = [i.configs for i in conventions])
     else:
         content = request.json
-        print content
         try:
             convention = Convention.query.one()
         except MultipleResultsFound:
             # Error: there should be one and only one convention record.
-            return ('', 500)
+            return ('There is more than one convention record.', 500)
         convention.name = content['name']
-        convention.start_dt = jsdate2py(content['start_dt'])
-        convention.timeslot_length = int(content['timeslot_length'])
-        db.session.add(convention)
-        db.session.commit()
-        return ('', 200)
+
+        # Convert the start date to a Python datetime object.
+        start_dt = jsdate2py(content['start_dt'])
+        if start_dt is None:
+            return ('Unable to parse the convention start date.', 500)
+        convention.start_dt = start_dt
+
+        # Convert the timeslot length from minutes to a timedelta object.
+        convention.timeslot_length = datetime.timedelta(0, int(content['timeslot_length']) * 60)
+
+        # Update the database.
+        try:
+            db.session.add(convention)
+            db.session.commit()
+        except SQLAlchemyError, e:
+            return ('Error updating the convention record: %s' % e, 500)
+        return ('Convention data successfully updated.', 200)
 
 @app.route('/number_of_timeslots.json')
 def number_of_timeslots():
