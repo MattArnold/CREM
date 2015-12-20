@@ -2,6 +2,10 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
 
   $scope.new_track = '';
   $scope.new_room = {};
+  $scope.new_room.name = '';
+  $scope.new_room.sq_ft = 0;
+  $scope.new_room.group_id = '';
+  $scope.new_room.capacity = 0;
   $scope.new_room_group = {};
 
   // Whenever the config data in Angular changes, immediately save
@@ -63,21 +67,14 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
       $scope.configs.number_of_timeslots = data.convention.number_of_timeslots;
       $scope.calculateEnd();
 
-      $scope.configs.rooms = {};
+      $scope.configs.rooms = [];
       angular.forEach(data.rooms, function(room) {
-        $scope.configs.rooms[room.id] = {};
-        $scope.configs.rooms[room.id].id = room.id;
-        $scope.configs.rooms[room.id].name = room.name;
-        $scope.configs.rooms[room.id].group_id = room.group_id;
-        $scope.configs.rooms[room.id].sq_ft = room.sq_ft;
-        $scope.configs.rooms[room.id].capacity = room.capacity;
+        appendRoom(room);
       });
 
-      $scope.configs.room_groups = {};
+      $scope.configs.room_groups = [];
       angular.forEach(data.room_groups, function(room_group) {
-        $scope.configs.room_groups[room_group.id] = {};
-        $scope.configs.room_groups[room_group.id].id = room_group.id;
-        $scope.configs.room_groups[room_group.id].name = room_group.group_name;
+        appendRoomGroup(room_group);
       });
 
       $scope.configs.tracks = {};
@@ -122,8 +119,40 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
     $scope.configs.start_dt = newyear + '-' + newmonth + '-' + newday + 'T:' + newhours;
   }
 
+  function appendRoom(room) {
+    var appended_room = {};
+    appended_room.id = room.id;
+    appended_room.name = room.name;
+    appended_room.group_id = room.group_id;
+    appended_room.sq_ft = room.sq_ft;
+    appended_room.capacity = room.capacity;
+    $scope.configs.rooms.push(appended_room);
+  };
+
+  $scope.createNewRoom = function() {
+    $scope.new_room.group_id = $scope.new_room.group_id.id;
+    appendRoom($scope.new_room);
+    $scope.new_room = {};
+  }
+
+  function appendRoomGroup(room_group) {
+    var appended_rg = {};
+    appended_rg.id = room_group.id;
+    appended_rg.name = room_group.group_name;
+    $scope.configs.room_groups.push(appended_rg);
+  }
+
+  $scope.getRoomGroupName = function(group_id) {
+    var found = _.find($scope.configs.room_groups, function(rg){
+      return rg.id == group_id;
+    })
+    result = found ? found.name : 'none';
+    return result;
+  }
+
   $scope.saveConfigsToDB = function() {
-    var req = {
+
+    var conventionreq = {
       method: 'POST',
       url: '/convention.json',
       headers: {

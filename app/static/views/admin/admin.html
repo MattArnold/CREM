@@ -98,50 +98,82 @@
     </div>
     </div>
     <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4>
+          Rooms
+        </h4>
+      </div>
       <div class="panel-body">
-        <label>Rooms</label>
-          <div class="input-group">
-<!--             <label for="room-name">New Room Name: </label>
- -->            <input type="text" class="form-control" id="room-name" name="room-name" aria-describedby="add-room-btn">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button" id="add-room-btn">+</button>
-            </span>
-          </div>
         <div class="row">
-          <div class="col-md-3">
-            <label>Room Name</label>
+          <div class="col-md-1">
           </div>
           <div class="col-md-3">
+            <label>Name</label>
+          </div>
+          <div class="col-md-2">
             <label>Capacity</label>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label>Sq Ft</label>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label>Room Group</label>
           </div>
         </div>
-        <div ng-repeat="room in configs.rooms | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
-          <div class="col-md-3">
-            {{room.name}}
+        <div class="row">
+          <form id="add-room-form">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" id="add-room-name" name="add-room-name" aria-describedby="add-room-btn" ng-model="new_room.name">
+            </div>
+            <div class="col-md-2">
+              <input type="text" class="form-control" id="add-room-sq-ft" name="add-room-name" aria-describedby="add-room-btn" ng-model="new_room.sq_ft">
+            </div>
+            <div class="col-md-2">
+              <input type="text" class="form-control" id="add-room-capacity" name="add-room-capacity" aria-describedby="add-room-btn" ng-model="new_room.capacity">
+            </div>
+            <div class="col-md-2">
+              <select class="form-control" id="add-room-roomgroup" name="add-room-roomgroup" aria-describedby="add-room-btn" ng-model="new_room.group_id" ng-options="rg.name for rg in configs.room_groups track by rg.id">
+                <option value="">none</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <button class="btn btn-default" type="button" id="add-room-btn" ng-click="createNewRoom()">
+                Add Room
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="well">
+          <div ng-repeat="room in configs.rooms | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-3">
+              {{room.name}}
+            </div>
+            <div class="col-md-2">
+              {{room.capacity}}
+            </div>
+            <div class="col-md-2">
+              {{room.sq_ft}}
+            </div>
+            <div class="col-md-2">
+              {{getRoomGroupName(room.group_id)}}
+            </div>
           </div>
-          <div class="col-md-3">
-            {{room.capacity}}
-          </div>
-          <div class="col-md-3">
-            {{room.sq_ft}}
-          </div>
-          <div class="col-md-3">
-            {{room.group_id}}
+          <div class="col-md-1">
           </div>
         </div>
-            <label>Room Groups</label>
-        <div ng-repeat="room_group in configs.room_groups | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
-          <div class="col-md-3">
-            {{room_group.name}}
-          </div>
-          <div class="col-md-3">
-            id #: {{room_group.id}}
+        <div class="well">
+          <label>Room Groups</label>
+          <div ng-repeat="room_group in configs.room_groups | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
+            <div class="col-md-3">
+              {{room_group.name}}
+            </div>
+            <div class="col-md-3">
+              id #: {{room_group.id}}
+            </div>
           </div>
         </div>
       </div>
