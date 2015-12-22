@@ -6,7 +6,8 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
   $scope.new_room.sq_ft = 0;
   $scope.new_room.group_id = '';
   $scope.new_room.capacity = 0;
-  $scope.new_room_group = {};
+
+  $scope.new_room_group = '';
 
   // Whenever the config data in Angular changes, immediately save
   // it to the browser's local storage.
@@ -69,13 +70,13 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
 
       $scope.configs.rooms = [];
       angular.forEach(data.rooms, function(room) {
+        if (room.group_id) {
+          room.group_id--;
+        };
         appendRoom(room);
       });
 
-      $scope.configs.room_groups = [];
-      angular.forEach(data.room_groups, function(room_group) {
-        appendRoomGroup(room_group);
-      });
+      $scope.configs.room_groups = data.room_groups;
 
       $scope.configs.tracks = {};
       angular.forEach(data.tracks, function(track) {
@@ -130,24 +131,19 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
   };
 
   $scope.createNewRoom = function() {
-    $scope.new_room.group_id = $scope.new_room.group_id.id;
-    appendRoom($scope.new_room);
-    $scope.new_room = {};
+    if (!_.includes($scope.configs.rooms, $scope.new_room) ){
+      $scope.new_room.group_id = $scope.new_room.group_id;
+      appendRoom($scope.new_room);
+      $scope.new_room = {};
+    }
   }
 
-  function appendRoomGroup(room_group) {
-    var appended_rg = {};
-    appended_rg.id = room_group.id;
-    appended_rg.name = room_group.group_name;
-    $scope.configs.room_groups.push(appended_rg);
-  }
-
-  $scope.getRoomGroupName = function(group_id) {
-    var found = _.find($scope.configs.room_groups, function(rg){
-      return rg.id == group_id;
-    })
-    result = found ? found.name : 'none';
-    return result;
+  $scope.createNewRoomGroup = function() {
+    // Make sure it is not already in room_groups
+    if (!_.includes($scope.configs.room_groups, $scope.new_room_group) ){
+      $scope.configs.room_groups.push($scope.new_room_group);
+      $scope.new_room_group = '';
+    }
   }
 
   $scope.saveConfigsToDB = function() {
@@ -165,11 +161,25 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
           'number_of_timeslots': $scope.configs.number_of_timeslots,
         }
     }
+    var roomsreq = {
+      method: 'POST',
+      url: '/rooms.json',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: $scope.configs.rooms,
+    }
 
-    $http(req).then(function(){
-      console.log('success', req);
+    $http(roomsreq).then(function(){
+      console.log('success', roomsreq);
     }, function(){
-      console.log('failure', req);
+      console.log('failure', roomsreq);
+    });
+
+    $http(conventionreq).then(function(){
+      console.log('success', conventionreq);
+    }, function(){
+      console.log('failure', conventionreq);
     });
   }
 

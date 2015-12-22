@@ -134,7 +134,7 @@
               <input type="text" class="form-control" id="add-room-capacity" name="add-room-capacity" aria-describedby="add-room-btn" ng-model="new_room.capacity">
             </div>
             <div class="col-md-2">
-              <select class="form-control" id="add-room-roomgroup" name="add-room-roomgroup" aria-describedby="add-room-btn" ng-model="new_room.group_id" ng-options="rg.name for rg in configs.room_groups track by rg.id">
+              <select class="form-control" id="add-room-roomgroup" name="add-room-roomgroup" aria-describedby="add-room-btn" ng-model="new_room.group_id" ng-options="id as rg for (id, rg) in configs.room_groups">
                 <option value="">none</option>
               </select>
             </div>
@@ -159,20 +159,31 @@
               {{room.sq_ft}}
             </div>
             <div class="col-md-2">
-              {{getRoomGroupName(room.group_id)}}
+              {{configs.room_groups[room.group_id]}}
             </div>
           </div>
           <div class="col-md-1">
           </div>
         </div>
         <div class="well">
-          <label>Room Groups</label>
-          <div ng-repeat="room_group in configs.room_groups | toArray | orderBy : 'group_id'" ng-class-odd="'odd'" ng-class-even="'even'" class="row">
-            <div class="col-md-3">
-              {{room_group.name}}
+          <div class="row">
+            <div class="col-md-2">
+              <h4>Room Groups</h4>
             </div>
-            <div class="col-md-3">
-              id #: {{room_group.id}}
+          </div>
+          <div class="row">
+            <div ng-repeat="room_group in configs.room_groups" ng-class-odd="'odd'" ng-class-even="'even'" class="col-md-2">
+              {{room_group}}
+            </div>
+            <div class="col-md-2">
+              <div class="input-group">
+                <input type="text" class="form-control" id="add-roomgroup" name="add-roomgroup" aria-describedby="add-roomgroup-btn" ng-model="new_room_group">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id="add-roomgroup-btn" ng-click="createNewRoomGroup()">
+                    +
+                  </button>
+                </span>
+              </div>
             </div>
           </div>
         </div>

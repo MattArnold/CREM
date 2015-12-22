@@ -274,10 +274,7 @@ class RoomGroup(db.Model):
 
     @property
     def ui_room_groups(self):
-        return {
-            'id': self.id,
-            'group_name': self.room_group_name,
-        }
+        return self.room_group_name
 
 
 class Convention(db.Model):
