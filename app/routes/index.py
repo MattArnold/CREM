@@ -98,12 +98,30 @@ def events():
     eventlist = Event.query.all()
     return jsonify(eventlist = [i.useroutput for i in eventlist])
 
-@app.route('/rooms.json')
+@app.route('/rooms.json', methods=['GET', 'POST'])
 def rooms():
-    roomlist = Room.query.all()
-    return jsonify(
-        rooms = [i.ui_rooms for i in roomlist]
-        )
+    if request.method == 'GET':
+        roomlist = Room.query.all()
+        return jsonify(rooms=[i.ui_rooms for i in roomlist])
+    else:
+        rooms = request.json
+        for room in rooms:
+            if 'id' not in room:
+                db_room = Room()
+            else:
+                db_room = Room.query.get(room['id'])
+            db_room.room_name = room['name']
+            db_room.room_sq_ft = room['sq_ft']
+            db_room.room_capacity = room['capacity']
+            db_room.room_group_id = room['group_id']
+            db.session.add(db_room)
+
+        # Update the database.
+        try:
+            db.session.commit()
+        except SQLAlchemyError, e:
+            return ('Error updating the room records: %s' % e, 500)
+        return ('Room configs successfully updated.', 200)
 
 @app.route('/room_groups.json')
 def room():

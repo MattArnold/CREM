@@ -171,15 +171,15 @@ angular.module('CREM').controller('AdminController', ['$scope', '$http', 'localS
     }
 
     $http(roomsreq).then(function(){
-      console.log('success', roomsreq);
+      console.log('roomsreq success', roomsreq);
     }, function(){
-      console.log('failure', roomsreq);
+      console.log('roomsreq failure', roomsreq);
     });
 
     $http(conventionreq).then(function(){
-      console.log('success', conventionreq);
+      console.log('conventionreq success', conventionreq);
     }, function(){
-      console.log('failure', conventionreq);
+      console.log('conventionreq failure', conventionreq);
     });
   }
 
