@@ -3,6 +3,7 @@ venv\Scripts\pip install setuptools --no-use-wheel --upgrade
 venv\Scripts\pip install flask==0.9
 venv\Scripts\pip install flask-login
 venv\Scripts\pip install flask-openid
+venv\Scripts\pip install flask-mail==0.7.6
 venv\Scripts\pip install sqlalchemy==0.7.9
 venv\Scripts\pip install flask-sqlalchemy==0.16
 venv\Scripts\pip install sqlalchemy-migrate==0.7.2

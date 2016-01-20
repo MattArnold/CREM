@@ -54,7 +54,7 @@ In Linux, activate the virtual environment with the command:
 
 In Windows, activate the virtual environment with the command:
 
-    venv\bin\activate
+    venv\Scripts\activate
 
 ## Creating the Database
 
