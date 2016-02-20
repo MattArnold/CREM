@@ -150,10 +150,11 @@ def combined_info():
                        "sq_ft": i.room_sq_ft,
                        "group_id": i.room_group_id,
                        "id": i.id,
+                       # TODO: rename this to bookings and make values returned useful.
                        "available_timeslots": [{"name": j.timeslot.name,
                                                 "index": j.timeslot.timeslot_index
                                                 }
-                                               for j in i.available_timeslots],
+                                               for j in i.bookings],
                        "suitable_events": [{"id": j.id,
                                             "title": j.title
                                             }
