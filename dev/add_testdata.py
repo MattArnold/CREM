@@ -14,14 +14,13 @@ sys.path.append(os.path.abspath(os.path.join(script_dir, '..')))
 
 from app import db
 from app.models import Convention, Timeslot
-from app.models import Track, Event, Resource, Presenter, Room, RoomGroup
+from app.models import Track, Event, Presenter, Room, RoomGroup
 
 # Delete records from tables of interest.
 Convention.query.delete()
 Timeslot.query.delete()
 Track.query.delete()
 Event.query.delete()
-Resource.query.delete()
 Presenter.query.delete()
 Room.query.delete()
 RoomGroup.query.delete()
@@ -127,29 +126,10 @@ for row in csvreader:
     # Assign a random timeslot.
     timeslot_index = random.randint(0, timeslot_count-1)
     timeslot = Timeslot.query.filter_by(timeslot_index=timeslot_index).first()
-    event.timeslot = timeslot
+    event.timeslots.append(timeslot)
 
     db.session.add(event)
 events_file.close()
-
-# Commit the test data to the database.
-db.session.commit()
-
-# Add resources.
-
-# For each Resource, the name, request form label and whether
-# the resource should be displayed.
-resource_infos = (
-    ('Projector', 'This event CANNOT happen without a projector', True),
-    ('Microphone/sound system',
-     'This event CANNOT happen without a microphone and sound system', True),
-    ('Drinking water', 'Drinking water', True),
-    ('Quiet (no airwalls)', 'Quiet (no airwalls)', True),
-)
-
-for resource_info in resource_infos:
-    resource = Resource(resource_info[0], resource_info[1], resource_info[2])
-    db.session.add(resource)
 
 # Commit the test data to the database.
 db.session.commit()

@@ -8,23 +8,14 @@ room_event = db.Table(
     db.Column('room_id', db.Integer, db.ForeignKey('room.id'))
 )
 
-# Associates multiple resources to multiple events.
-event_resources = db.Table(
-    'event_resources',
-    db.Model.metadata,
-    db.Column(
-        'event_id',
-        db.Integer(),
-        db.ForeignKey('event.id', ondelete='CASCADE', onupdate='CASCADE')
-    ),
-    db.Column(
-        'resource_id',
-        db.Integer(),
-        db.ForeignKey('resource.id', ondelete='CASCADE', onupdate='CASCADE')
-    )
+# Associate multiple timeslots to multiple events.
+timeslot_event = db.Table(
+    'timeslot_event',
+    db.Column('event_id', db.Integer, db.ForeignKey('event.id')),
+    db.Column('timeslot_id', db.Integer, db.ForeignKey('timeslot.id'))
 )
 
-# Associates multiple persons to multiple events.
+# Associates multiple presenters to multiple events.
 presenter_event = db.Table(
     'presenter_event',
     db.Column(
@@ -42,23 +33,9 @@ presenter_event = db.Table(
 room_suitability = db.Table(
     'room_suitability',
     db.Column(
-        'event_id',
+        'eventtype_id',
         db.Integer,
-        db.ForeignKey('event.id', ondelete='CASCADE', onupdate='CASCADE')
-    ),
-    db.Column(
-        'room_id',
-        db.Integer,
-        db.ForeignKey('room.id', ondelete='CASCADE', onupdate='CASCADE')
-    )
-)
-
-room_availability = db.Table(
-    'room_availability',
-    db.Column(
-        'timeslot_id',
-        db.Integer,
-        db.ForeignKey('timeslot.id', ondelete='CASCADE', onupdate='CASCADE')
+        db.ForeignKey('eventtype.id', ondelete='CASCADE', onupdate='CASCADE')
     ),
     db.Column(
         'room_id',
@@ -77,6 +54,8 @@ class Track(db.Model):
     trackhead_first_name = db.Column(db.String())
     trackhead_last_name = db.Column(db.String())
     active = db.Column(db.Boolean(), default=True)
+    events = db.relationship('Event', backref='track',
+                             cascade='all, delete-orphan')
 
     def __init__(self, name, email):
         self.name = name
@@ -114,14 +93,10 @@ class Event(db.Model):
     comments = db.Column(db.String())
     active = db.Column(db.Boolean(), default=True)
     track_id = db.Column(db.Integer(), db.ForeignKey('track.id'))
-    track = db.relationship('Track')
     rooms = db.relationship('Room',
                             secondary='room_event',
                             backref=db.backref('used_for_event'))
     eventtype_id = db.Column(db.Integer, db.ForeignKey('eventtype.id'))
-    resources = db.relationship('Resource',
-                                secondary=event_resources,
-                                backref=db.backref('at_event'))
     players = db.Column(db.Integer())
     roundTables = db.Column(db.Integer())
     longTables = db.Column(db.Integer())
@@ -132,8 +107,9 @@ class Event(db.Model):
         backref=db.backref('at_event'),
         passive_deletes=True
     )
-    timeslot_id = db.Column(db.Integer, db.ForeignKey('timeslot.id'))
-    timeslot = db.relationship('Timeslot')
+    timeslots = db.relationship('Timeslot',
+                                secondary='timeslot_event',
+                                backref=db.backref('has_event'))
     duration = db.Column(db.Integer)  # The number of timeslots.
     convention_id = db.Column(db.Integer, db.ForeignKey('convention.id'))
     convention = db.relationship('Convention')
@@ -150,14 +126,24 @@ class Event(db.Model):
                                          presenter.last_name)).strip()
             presenter_list.append(presenter_name)
 
+        # Find the index of the first timeslot for this event.
+        timeslot_index = None
+        for timeslot in self.timeslots:
+            if not timeslot_index:
+                timeslot_index = timeslot.timeslot_index
+            elif timeslot.timeslot_index < timeslot_index:
+                timeslot_index = timeslot.timeslot_index
+
         # Create the string representing the start datetime.
-        timeslot_duration = self.convention.timeslot_duration
-        timeslot_index = self.timeslot.timeslot_index
-        start_dt = self.convention.start_dt + timeslot_duration * timeslot_index
-        if self.convention.datetime_format:
-            start_dt_str = start_dt.strftime(self.convention.datetime_format)
+        if timeslot_index:
+            timeslot_duration = self.convention.timeslot_duration
+            start_dt = self.convention.start_dt + timeslot_duration * timeslot_index
+            if self.convention.datetime_format:
+                start_dt_str = start_dt.strftime(self.convention.datetime_format)
+            else:
+                start_dt_str = start_dt.strftime('%m/%d/%Y %I:%M %p')
         else:
-            start_dt_str = start_dt.strftime('%m/%d/%Y %I:%M %p')
+            start_dt_str = ''
 
         return {
             'eventnumber': self.id,
@@ -168,7 +154,6 @@ class Event(db.Model):
             'track': self.track.name,
             'rooms': self.rooms,
             'event_type': self.event_type,
-            'resources': self.resources,
             'presenters': ', '.join(presenter_list),
             'start': start_dt_str,
             'duration': self.duration
@@ -204,23 +189,6 @@ class Presenter(db.Model):
         return '%s %s (%s)' % (self.first_name, self.last_name, self.email)
 
 
-class Resource(db.Model):
-    __tablename__ = 'resource'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(), unique=True)
-    request_form_label = db.Column(db.String())
-    displayed_on_requst_form = db.Column(db.Boolean())
-    active = db.Column(db.Boolean(), default=True)
-
-    def __init__(self, name, request_form_label, displayed_on_requst_form):
-        self.name = name
-        self.request_form_label = request_form_label
-        self.displayed_on_requst_form = displayed_on_requst_form
-
-    def __repr__(self):
-        return 'Resource: %s' % self.name
-
-
 class Room(db.Model):
     __tablename__ = 'room'
     id = db.Column(db.Integer, primary_key=True)
@@ -228,20 +196,13 @@ class Room(db.Model):
     room_sq_ft = db.Column(db.Integer)
     room_capacity = db.Column(db.Integer)
     room_group_id = db.Column(db.Integer, db.ForeignKey('room_group.id'))
-    room_group = db.relationship('RoomGroup', backref='rooms')
-    convention_id = db.Column(db.Integer, db.ForeignKey('convention.id'))
-    convention = db.relationship('Convention', backref='rooms')
     active = db.Column(db.Boolean(), default=True)
+    bookings = db.relationship('RoomBooked', backref='room')
+
     suitable_events = db.relationship(
-        'Event',
+        'EventType',
         secondary=room_suitability,
         backref=db.backref('suitable_rooms'),
-        passive_deletes=True
-    )
-    available_timeslots = db.relationship(
-        'Timeslot',
-        secondary=room_availability,
-        backref=db.backref('available_rooms'),
         passive_deletes=True
     )
 
@@ -257,7 +218,8 @@ class Room(db.Model):
             'capacity': self.room_capacity,
             'group_id': self.room_group_id,
             'suitable_events': self.suitable_events,
-            'available_timeslots': self.available_timeslots
+            # TODO: rename this to booked_timeslots.
+            'available_timeslots': self.bookings
         }
 
 
@@ -265,6 +227,8 @@ class RoomGroup(db.Model):
     __tablename__ = 'room_group'
     id = db.Column(db.Integer, primary_key=True)
     room_group_name = db.Column(db.String(50))
+    rooms = db.relationship('Room', backref='room_group',
+                            cascade='all, delete-orphan')
 
     def __init__(self, room_group_name):
         self.room_group_name = room_group_name
@@ -304,21 +268,32 @@ class Convention(db.Model):
             'number_of_timeslots': self.number_of_timeslots,
         }
 
+
 class Timeslot(db.Model):
     __tablename__ = 'timeslot'
     id = db.Column(db.Integer(), primary_key=True)
     timeslot_index = db.Column(db.Integer(), unique=True)  # 0-based.
     name = db.Column(db.String())
-    convention_id = db.Column(
-        db.Integer(),
-        db.ForeignKey('convention.id', ondelete='CASCADE', onupdate='CASCADE')
-    )
-    convention = db.relationship('Convention',
-                                 backref=db.backref('timeslots'))
     rsvp_conflicts = db.Column(db.Integer())
     active = db.Column(db.Boolean(), default=True)
+    room_bookings = db.relationship('RoomBooked', backref='timeslot')
+    presenter_bookings = db.relationship('PresenterBooked', backref='timeslot')
 
     def __init__(self, timeslot_index):
         self.timeslot_index = timeslot_index
 
-    
+
+class PresenterBooked(db.Model):
+    __tablename__ = 'presenter_booked'
+    id = db.Column(db.Integer(), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
+    presenter_id = db.Column(db.Integer, db.ForeignKey('presenter.id'))
+    timeslot_id = db.Column(db.Integer, db.ForeignKey('timeslot.id'))
+
+
+class RoomBooked(db.Model):
+    __tablename__ = 'room_booked'
+    id = db.Column(db.Integer(), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
+    timeslot_id = db.Column(db.Integer, db.ForeignKey('timeslot.id'))

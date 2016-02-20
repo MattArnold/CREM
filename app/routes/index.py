@@ -150,8 +150,8 @@ def combined_info():
                        "sq_ft": i.room_sq_ft,
                        "group_id": i.room_group_id,
                        "id": i.id,
-                       "available_timeslots": [{"name": j.name,
-                                                "index": j.timeslot_index
+                       "available_timeslots": [{"name": j.timeslot.name,
+                                                "index": j.timeslot.timeslot_index
                                                 }
                                                for j in i.available_timeslots],
                        "suitable_events": [{"id": j.id,
