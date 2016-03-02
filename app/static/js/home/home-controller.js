@@ -1,12 +1,25 @@
 angular.module('CREM')
-  .controller('HomeController', ['$scope', '$http', function ($scope, $http) {
+  .controller('HomeController', ['$scope', '$http', 'EventsService', function ($scope, $http, EventsService) {
+  console.log('controller reached');
+
+    EventsService
+    .load
+    .then(function() {
+      $scope.events = EventsService.events;
+      console.log('after loading ', EventsService.events);
+    });
+    
+    $scope.refresh_events = function() {
+      $scope.events = EventsService.events;
+      console.log('after refresh ', EventsService.events);
+    };
+    
     var columnsResponsePromise = $http.get('/columns.json');
     var tracksResponsePromise = $http.get('/tracks.json');
-    var eventsResponsePromise = $http.get('/eventlist.json');
     $scope.controlsShown = true;
     $scope.tracks = {};
     $scope.columns = {};
-    $scope.events = {};
+
     $scope.allTracksHidden = false;
     $scope.allTracksShown = false;
     $scope.allColumnsHidden = false;
@@ -39,10 +52,6 @@ angular.module('CREM')
         $scope.columns[columnid].visible = false;
       });
       setColumnWidths();
-    });
-
-    eventsResponsePromise.success(function(data) {
-      $scope.events = data.eventlist;
     });
 
     function setColumnWidths() {
