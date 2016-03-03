@@ -27,11 +27,15 @@ angular.module('CREM')
 
     columnsResponsePromise.success(function(data) {
       $scope.columns = data.columns;
+      $scope.columns.conflict = {
+        'id': 'conflict', 
+        'name': 'Conflict?'
+      };
       _.each($scope.columns, function(column){
         column.visible = true;
       });
 
-      _.each(['eventnumber','title','track','type','start','duration','room','presenters','resources','description','comments'], function(columnid, i){
+      _.each(['eventnumber','title','track','type','start','duration','room','presenters','resources','description','comments','conflict'], function(columnid, i){
         $scope.columns[columnid].order = i;
       });
       // These columns are hidden by default:
@@ -43,6 +47,9 @@ angular.module('CREM')
 
     eventsResponsePromise.success(function(data) {
       $scope.events = data.eventlist;
+      _.each($scope.events, function(event){
+        event.conflict = (Math.floor(Math.random() * 2) === 0) ? '<div class="conflicticon"></div>' : '<div class="noconflicticon">OK</div>';
+      });
     });
 
     function setColumnWidths() {
@@ -66,7 +73,7 @@ angular.module('CREM')
       $scope.columns.description.width = 12;
       $scope.columns.comments.width = 12;
 
-      _.each(['presenters','title','resources','room','start','track','type','duration','eventnumber'], function(columnid){
+      _.each(['presenters','title','resources','room','start','track','type','duration','eventnumber','conflict'], function(columnid){
         if (accumulatedWidth < 12 && $scope.columns[columnid].visible) {
           $scope.columns[columnid].width++;
           accumulatedWidth++;

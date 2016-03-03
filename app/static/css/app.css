@@ -74,3 +74,21 @@ body {
 .comment:before {
     content: 'Note: ';
 }
+
+.conflicticon {
+    font-weight: 800;
+    width: 0;
+    height: 0;
+    border-top: 1rem solid transparent;
+    border-left: 2rem solid #ce4844;
+    border-bottom: 1rem solid transparent;
+}
+
+.noconflicticon {
+    width: 2rem;
+    height: 2rem;
+    background: #FFF;
+    -moz-border-radius: 1rem;
+    -webkit-border-radius: 1rem;
+    border-radius: 1rem;
+}
