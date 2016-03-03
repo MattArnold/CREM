@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cp fabfile_env.prod.py fabfile_env.py
+rm fabfile_env.pyc
