@@ -6,6 +6,7 @@ import json
 from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.exc import SQLAlchemyError
 import datetime
+from collections import defaultdict
 
 def jsdate2py(s):
     """
@@ -95,8 +96,54 @@ def columns():
 
 @app.route('/eventlist.json')
 def events():
-    eventlist = Event.query.all()
-    return jsonify(eventlist = [i.useroutput for i in eventlist])
+    events = Event.query.all()
+
+    # Index events by ID, prepare for conflict annotation
+    events_by_id = {}
+    for event in events:
+        data = event.useroutput
+        data['conflict'] = False
+        events_by_id[event.id] = data
+
+    # Collate events by timeslot+presenter and timeslot+room
+    events_by_timeslot_and_presenter = defaultdict(list)
+    events_by_timeslot_and_room = defaultdict(list)
+    for event in events:
+
+        # Ignore inactive events
+        if not event.active:
+            continue
+
+        # Scan all timeslots for the event
+        for timeslot in event.timeslots:
+
+            # Collect this event into a timeslot:presenter bucket
+            for presenter in event.presenters:
+                key = '%s:%s' % (timeslot.id, presenter.id)
+                events_by_timeslot_and_presenter[key].append(event.id)
+
+            # Collect this event into a timeslot:room bucket
+            for room in event.rooms:
+                key = '%s:%s' % (timeslot.id, room.id)
+                events_by_timeslot_and_room[key].append(event.id)
+
+    # Annotate events with presenter conflicts
+    for key, event_ids in events_by_timeslot_and_presenter.items():
+        # If this timeslot & presenter appears in multiple events, all those
+        # events are in conflict.
+        if len(event_ids) > 1:
+            for event_id in event_ids:
+                events_by_id[event_id]['conflict'] = True
+
+    # Annotate events with room conflicts
+    for key, event_ids in events_by_timeslot_and_room.items():
+        # If this timeslot & room appears in multiple events, all those
+        # events are in conflict.
+        if len(event_ids) > 1:
+            for event_id in event_ids:
+                events_by_id[event_id]['conflict'] = True
+
+    return jsonify(eventlist = events_by_id.values())
 
 @app.route('/rooms.json', methods=['GET', 'POST'])
 def rooms():
