@@ -126,6 +126,11 @@ class Event(db.Model):
                                          presenter.last_name)).strip()
             presenter_list.append(presenter_name)
 
+        room_list = []
+        for room in self.rooms:
+            room_name = ('%s' % (room.room_name,)).strip()
+            room_list.append(room_name)
+
         # Find the index of the first timeslot for this event.
         timeslot_index = None
         for timeslot in self.timeslots:
@@ -152,7 +157,7 @@ class Event(db.Model):
             'comments': self.comments,
             'trackuid': self.track.uid,
             'track': self.track.name,
-            'rooms': self.rooms,
+            'rooms': ', '.join(room_list),
             'event_type': self.event_type,
             'presenters': ', '.join(presenter_list),
             'start': start_dt_str,

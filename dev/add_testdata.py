@@ -235,5 +235,14 @@ for room_info in room_infos:
             filter(RoomGroup.room_group_name == room_info[3]).first()
     db.session.add(room)
 
+db.session.commit()
+
+# Assign a random room to each event.
+events = Event.query.all()
+rooms = Room.query.all()
+for event in events:
+    # Randomly select a room for this event
+    event.rooms = [random.choice(rooms)]
+
 # Commit the test data to the database.
 db.session.commit()
