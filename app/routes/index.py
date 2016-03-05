@@ -86,7 +86,7 @@ def columns():
         'track': {'id':'track','name':'Track',},
         'start': {'id':'start','name':'Start',},
         'duration': {'id':'duration','name':'Duration',},
-        'room': {'id':'room','name':'Room',},
+        'rooms': {'id':'rooms','name':'Room',},
         'type': {'id':'type','name':'Type',},
         'presenters': {'id':'presenters','name':'Program Participants',},
         'resources': {'id':'resources','name':'Resources',},

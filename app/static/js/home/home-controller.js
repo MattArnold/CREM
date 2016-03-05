@@ -35,7 +35,7 @@ angular.module('CREM')
         column.visible = true;
       });
 
-      _.each(['eventnumber','title','track','type','start','duration','room','presenters','resources','description','comments','conflict'], function(columnid, i){
+      _.each(['eventnumber','title','track','type','start','duration','rooms','presenters','resources','description','comments','conflict'], function(columnid, i){
         $scope.columns[columnid].order = i;
       });
       // These columns are hidden by default:
@@ -73,7 +73,7 @@ angular.module('CREM')
       $scope.columns.description.width = 12;
       $scope.columns.comments.width = 12;
 
-      _.each(['presenters','title','resources','room','start','track','type','duration','eventnumber','conflict'], function(columnid){
+      _.each(['presenters','title','resources','rooms','start','track','type','duration','eventnumber','conflict'], function(columnid){
         if (accumulatedWidth < 12 && $scope.columns[columnid].visible) {
           $scope.columns[columnid].width++;
           accumulatedWidth++;
