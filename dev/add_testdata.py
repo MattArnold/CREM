@@ -242,7 +242,16 @@ events = Event.query.all()
 rooms = Room.query.all()
 for event in events:
     # Randomly select a room for this event
-    event.rooms = [random.choice(rooms)]
+    random_rooms = random.sample(rooms, random.randrange(1,2))
+
+    # If the room has a room group, randomly select
+    # 0 to 1 more rooms from that group for this event.
+    if random_rooms[0].room_group:
+      another_room = random.choice(rooms)
+      if random_rooms[0] != another_room and random_rooms[0].room_group == another_room.room_group:
+        random_rooms.append(another_room)
+
+    event.rooms = random_rooms
 
 # Commit the test data to the database.
 db.session.commit()
