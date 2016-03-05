@@ -92,6 +92,7 @@ def columns():
         'resources': {'id':'resources','name':'Resources',},
         'description': {'id':'description','name':'Description',},
         'comments': {'id':'comments','name':'Staff Comments',},
+        'conflict': {'id': 'conflict','name':'Conflict?',}
         })
 
 @app.route('/eventlist.json')

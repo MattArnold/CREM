@@ -27,10 +27,6 @@ angular.module('CREM')
 
     columnsResponsePromise.success(function(data) {
       $scope.columns = data.columns;
-      $scope.columns.conflict = {
-        'id': 'conflict', 
-        'name': 'Conflict?'
-      };
       _.each($scope.columns, function(column){
         column.visible = true;
       });
