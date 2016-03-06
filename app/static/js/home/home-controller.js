@@ -121,12 +121,12 @@ angular.module('CREM')
 
       checkTrackVisibility();
     };
-    
+
     function checkTrackVisibility() {
       $scope.allTracksHidden = _.every($scope.tracks, {'visible':false});
       $scope.allTracksShown  = _.every($scope.tracks, {'visible':true});
     };
-    
+
     tracksResponsePromise.error(function() {
       $scope.tracks = [{notracksfound:{'name':'No Tracks Found','uid':'notracksfound',visible:'true'}}];
     });
