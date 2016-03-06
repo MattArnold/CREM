@@ -43,9 +43,6 @@ angular.module('CREM')
 
     eventsResponsePromise.success(function(data) {
       $scope.events = data.eventlist;
-      _.each($scope.events, function(event){
-        event.conflict = (Math.floor(Math.random() * 2) === 0) ? '<div class="conflicticon"></div>' : '<div class="noconflicticon">OK</div>';
-      });
     });
 
     function setColumnWidths() {

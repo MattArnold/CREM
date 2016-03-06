@@ -97,7 +97,7 @@ def columns():
         'resources': {'id':'resources','name':'Resources',},
         'description': {'id':'description','name':'Description',},
         'comments': {'id':'comments','name':'Staff Comments',},
-        'conflict': {'id': 'conflict','name':'Conflict?',}
+        'conflict': {'id': 'conflict','name':'Conflict',}
         })
 
 @app.route('/eventlist.json')
@@ -108,7 +108,7 @@ def events():
     events_by_id = {}
     for event in events:
         data = event.useroutput
-        data['conflict'] = False
+        data['conflict'] = "<div class='noconflicticon'>OK</div>"
         events_by_id[event.id] = data
 
     # Collate events by timeslot+presenter and timeslot+room
@@ -139,7 +139,7 @@ def events():
         # events are in conflict.
         if len(event_ids) > 1:
             for event_id in event_ids:
-                events_by_id[event_id]['conflict'] = True
+                events_by_id[event_id]['conflict'] = "<div class='conflicticon'>&nbsp;Participant</div>"
 
     # Annotate events with room conflicts
     for key, event_ids in events_by_timeslot_and_room.items():
@@ -147,7 +147,10 @@ def events():
         # events are in conflict.
         if len(event_ids) > 1:
             for event_id in event_ids:
-                events_by_id[event_id]['conflict'] = True
+                if events_by_id[event_id]['conflict'] == "<div class='conflicticon'>&nbsp;Participant</div>":
+                    events_by_id[event_id]['conflict'] += "<div class='conflicticon'>&nbsp;Room</div>"
+                else:
+                    events_by_id[event_id]['conflict'] = "<div class='conflicticon'>&nbsp;Room</div>"
 
     return jsonify(eventlist = events_by_id.values())
 
