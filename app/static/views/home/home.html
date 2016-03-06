@@ -1,5 +1,12 @@
 <div class="container-fluid">
     <div class="container filters navbar">
+        <ul class="input-group" ng-show="controlsShown">
+          <span class="input-group-addon" id="basic-addon1">URL to a .csv file:</span>
+          <input type="text" class="form-control" ng-model="source_url">
+          <span class="input-group-btn">
+            <button id="importSchedule" type="button" class="btn btn-primary" ng-click="importSchedule()">Import Schedule</button>
+          </span>
+        </ul>
         <ul class="btn-group" ng-show="controlsShown">
             <button type="button" ng-repeat="item in tracks" ng-click="trackFilter()" class="btn" ng-class="{ 'btn-info': item.visible }" >{{item.name}}</button>
             <button type="button" ng-click="hideOrShowAllTracks()" class="btn"><span ng-if="allTracksShown">Hide</span><span ng-if="!allTracksShown">Show</span> All Tracks</button>
