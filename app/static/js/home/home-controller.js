@@ -10,7 +10,7 @@ angular.module('CREM')
     $scope.allTracksHidden = false;
     $scope.allTracksShown = false;
     $scope.allColumnsHidden = false;
-    $scope.orderByColumn = 'track';
+    $scope.orderByColumn = 'conflict';
 
     tracksResponsePromise.success(function(data) {
       angular.forEach(data.tracknames, function(track) {
