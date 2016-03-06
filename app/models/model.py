@@ -302,3 +302,13 @@ class RoomBooked(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
     timeslot_id = db.Column(db.Integer, db.ForeignKey('timeslot.id'))
+
+
+class DataLoadError(db.Model):
+    __tablename__ = 'data_load_error'
+    id = db.Column(db.Integer(), primary_key=True)
+    error_level = db.Column(db.String(50))
+    destination_table = db.Column(db.String(50))
+    line_num = db.Column(db.Integer)
+    error_msg = db.Column(db.String(50))
+    error_dt = db.Column(db.DateTime)

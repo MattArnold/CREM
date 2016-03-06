@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CREM</title>
+  <link href="lib/bootstrap-css/css/bootstrap.css" rel="stylesheet">
+  <link href="lib/jquery-ui/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+  <link href="css/app.css" rel="stylesheet">
+  <link href='lib/angular-loading-bar/build/loading-bar.css' rel='stylesheet' type='text/css' media='all' />
+</head>
+<body>
+  <h2>Database Refresh Errors and Warnings</h2>
+
+  <p>Return to the <a href="/">event list</a>.</p>
+
+  {% if load_errors %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Line number</th>
+          <th>Destination table</th>
+          <th>Error level</th>
+          <th>Error message</th>
+          <th>Date/Time</th>
+        </tr>
+      </thead>
+      {% for load_error in load_errors %}
+        <tr>
+          <td>{{ load_error.line_num }}</td>
+          <td>{{ load_error.destination_table }}</td>
+          <td>{{ load_error.error_level }}</td>
+          <td>{{ load_error.error_msg }}</td>
+          <td>{{ load_error.error_dt }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>There were no errors.</p>
+  {% endif %}
+</body>
