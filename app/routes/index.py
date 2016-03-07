@@ -9,8 +9,18 @@ import datetime
 from collections import defaultdict
 import urllib
 import os
+import logging
+from logging.handlers import RotatingFileHandler
 
 import refresh_data
+
+
+# Set up logging.
+if app.debug:
+    filehandler = logging.handlers.RotatingFileHandler('crem.log',
+                                                       'a', 100000, 10)
+    filehandler.setLevel(logging.WARNING)
+    app.logger.addHandler(filehandler)
 
 
 def jsdate2py(s):

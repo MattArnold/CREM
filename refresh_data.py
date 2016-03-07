@@ -7,9 +7,6 @@ import os
 import unicodecsv as csv
 import datetime
 
-script_dir = os.path.dirname(__file__)
-sys.path.append(os.path.abspath(os.path.join(script_dir, '..')))
-
 CONVENTION_INFO_FNAME = 'convention_info.csv'
 
 
@@ -54,7 +51,7 @@ def get_timeslots(start_date_str, start_time_str, duration_str,
     return timeslots
 
 
-def refresh_data(sched_info_fname, convention_info_fname=CONVENTION_INFO_FNAME):
+def refresh_data(sched_info_fname, convention_info_fname=None):
     from app import db
     from app.models import Convention, Timeslot, Track, Event, Presenter
     from app.models import Room, RoomGroup, DataLoadError
@@ -71,8 +68,12 @@ def refresh_data(sched_info_fname, convention_info_fname=CONVENTION_INFO_FNAME):
 
     # Define the convention.
 
+    if not convention_info_fname:
+        script_dir = os.path.dirname(__file__)
+        convention_info_fname = os.path.join(script_dir, CONVENTION_INFO_FNAME)
+
     convention = Convention()
-    with open(CONVENTION_INFO_FNAME, 'rb') as csvfile:
+    with open(convention_info_fname, 'rb') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
         first_row = True
         for row in csvreader:
@@ -228,6 +229,8 @@ def refresh_data(sched_info_fname, convention_info_fname=CONVENTION_INFO_FNAME):
                 try:
                     timeslots = get_timeslots(row[0], row[1], row[9],
                                               convention, Timeslot)
+                    event.timeslots = timeslots
+                    event.duration = len(timeslots)
                 except Exception, e:
                     load_error = DataLoadError()
                     load_error.error_level = 'Error'
@@ -237,9 +240,6 @@ def refresh_data(sched_info_fname, convention_info_fname=CONVENTION_INFO_FNAME):
                     load_error.error_dt = datetime.datetime.now()
                     db.session.add(load_error)
                     continue
-
-                event.timeslots = timeslots
-                event.duration = len(timeslots)
 
                 event.failityRequest = row[10]
                 event.convention = convention
@@ -291,9 +291,6 @@ if __name__ == '__main__':
     Allows the data to be loaded from the command line, by passing the
     file name(s) as command line arguments.
     """
-    script_dir = os.path.dirname(__file__)
-    sys.path.append(os.path.abspath(os.path.join(script_dir, '..')))
-
     # Get the name of the files with schedule and convention information.
     if len(sys.argv) < 2:
         sys.stderr.write('Error: schedule information file not specified\n')
@@ -313,4 +310,4 @@ if __name__ == '__main__':
             sys.exit(1)
 
     # Replace the data in the database.
-    replace_data(sched_info_fname, convention_info_fname=CONVENTION_INFO_FNAME)
+    refresh_data(sched_info_fname, convention_info_fname=CONVENTION_INFO_FNAME)
