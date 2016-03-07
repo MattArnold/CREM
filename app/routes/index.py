@@ -232,10 +232,11 @@ def combined_info():
     )
 
 
-@app.route('/refresh-database')
+@app.route('/refresh-database', methods=['POST'])
 def refresh_database():
     # Export the schedule in CSV format.
-    result = urllib.urlretrieve(app.config['SCHEDULE_URL'])
+    result = request.data
+    # result = urllib.urlretrieve(app.config['SCHEDULE_URL'])
 
     # Refresh the database and delete the temporary export file.
     fname = result[0]

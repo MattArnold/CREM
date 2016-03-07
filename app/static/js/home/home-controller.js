@@ -3,6 +3,7 @@ angular.module('CREM')
     var columnsResponsePromise = $http.get('/columns.json');
     var tracksResponsePromise = $http.get('/tracks.json');
     var eventsResponsePromise = $http.get('/eventlist.json');
+    $scope.source_url = '';
     $scope.controlsShown = true;
     $scope.tracks = {};
     $scope.columns = {};
@@ -98,6 +99,11 @@ angular.module('CREM')
       $scope.tracks[clicked].visible = $scope.tracks[clicked].visible ? false : true;
 
       checkTrackVisibility();
+    };
+
+    // Replace the entire schedule in the backend database from a CSV file.
+    $scope.importSchedule = function() {
+      var refreshPromise = $http.post('/refresh-database', $scope.source_url);
     };
 
     // Either turn all tracks on, or all tracks off.
