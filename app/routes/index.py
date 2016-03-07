@@ -1,7 +1,7 @@
 from app import app
 from app import db
 from app.models import Convention, Event, Track, Room, RoomGroup, Timeslot, DataLoadError
-from flask import jsonify, request, render_template
+from flask import jsonify, request, render_template, url_for, redirect
 import json
 from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.exc import SQLAlchemyError
@@ -242,6 +242,12 @@ def refresh_database():
     refresh_data.refresh_data(fname)
     os.remove(fname)
 
+    # Display any errors and warnings that occurred.
+    return redirect(url_for('show_database_errors'))
+
+
+@app.route('/show-database-errors')
+def show_database_errors():
     # Display any errors and warnings that occurred.
     load_errors = DataLoadError.query.order_by(DataLoadError.line_num).all()
     return render_template('load_errors.html', load_errors=load_errors)
