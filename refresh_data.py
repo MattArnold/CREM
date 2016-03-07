@@ -56,6 +56,10 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
     from app.models import Convention, Timeslot, Track, Event, Presenter
     from app.models import Room, RoomGroup, DataLoadError
 
+    # Keep track of the number of errors and warnings.
+    num_errors = 0
+    num_warnings = 0
+
     # Delete records from tables of interest.
     DataLoadError.query.delete()
     Convention.query.delete()
@@ -219,6 +223,7 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
                     load_error.error_msg = '%s is not a defined track; skipping this event' % row[5]
                     load_error.error_dt = datetime.datetime.now()
                     db.session.add(load_error)
+                    num_errors += 1
                     continue
                 event = Event()
                 event.title = row[6]
@@ -239,6 +244,7 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
                     load_error.error_msg = str(e)
                     load_error.error_dt = datetime.datetime.now()
                     db.session.add(load_error)
+                    num_errors += 1
                     continue
 
                 event.failityRequest = row[10]
@@ -253,6 +259,7 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
                     load_error.line_num = csvreader.line_num
                     load_error.error_msg = '%s is not a pre-defined room; adding this room' % row[4]
                     load_error.error_dt = datetime.datetime.now()
+                    num_warnings += 1
                     db.session.add(load_error)
 
                     room = Room()
@@ -286,6 +293,9 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
     # Commit the data to the database.
     db.session.commit()
 
+    # Return the number of errors and warnings.
+    return num_errors, num_warnings
+
 if __name__ == '__main__':
     """
     Allows the data to be loaded from the command line, by passing the
@@ -310,4 +320,6 @@ if __name__ == '__main__':
             sys.exit(1)
 
     # Replace the data in the database.
-    refresh_data(sched_info_fname, convention_info_fname=CONVENTION_INFO_FNAME)
+    num_errors, num_warnings = refresh_data(sched_info_fname,
+                                            convention_info_fname=CONVENTION_INFO_FNAME)
+    sys.stderr.write('%d errors; %d warnings\n' % (num_errors, num_warnings))

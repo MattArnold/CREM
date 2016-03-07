@@ -235,20 +235,29 @@ def combined_info():
 @app.route('/refresh-database', methods=['POST'])
 def refresh_database():
     # Export the schedule in CSV format.
-    result = request.data
-    # result = urllib.urlretrieve(app.config['SCHEDULE_URL'])
+    url = request.data.strip()
+    if not url:
+        return ('The URL for schedule document was not specified', 500)
+    try:
+        result = urllib.urlretrieve(url)
+    except Exception, e:
+        return ('Unable to read the schedule document: %s' % e, 500)
 
     # Refresh the database and delete the temporary export file.
     fname = result[0]
-    refresh_data.refresh_data(fname)
+    num_errors, num_warnings = refresh_data.refresh_data(fname)
     os.remove(fname)
 
-    # Display any errors and warnings that occurred.
-    return redirect(url_for('show_database_errors'))
+    # Indicate in the HTTP result if any errors or warnings occurred.
+    if num_errors == 0 and num_warnings == 0:
+        return ('Success: all records were loaded', 200)
+    else:
+        return ('Errors: there were %d errors and %d warnings' %
+                (num_errors, num_errors), 200)
 
 
 @app.route('/show-database-errors')
 def show_database_errors():
-    # Display any errors and warnings that occurred.
+    # Display errors and warnings that occurred when refreshing the database.
     load_errors = DataLoadError.query.order_by(DataLoadError.line_num).all()
     return render_template('load_errors.html', load_errors=load_errors)
