@@ -7,6 +7,10 @@ import os
 import unicodecsv as csv
 import datetime
 
+from app import db
+from app.models import Convention, Timeslot, Track, Event, Presenter
+from app.models import Room, RoomGroup, DataLoadError
+
 CONVENTION_INFO_FNAME = 'convention_info.csv'
 
 
@@ -52,15 +56,18 @@ def get_timeslots(start_date_str, start_time_str, duration_str,
 
 
 def refresh_data(sched_info_fname, convention_info_fname=None):
-    from app import db
-    from app.models import Convention, Timeslot, Track, Event, Presenter
-    from app.models import Room, RoomGroup, DataLoadError
-
     # Keep track of the number of errors and warnings.
     num_errors = 0
     num_warnings = 0
 
     # Delete records from tables of interest.
+    events = Event.query.all()
+    for event in events:
+        event.rooms = []
+        event.presenters = []
+        event.timeslots = []
+    db.session.commit()
+
     DataLoadError.query.delete()
     Convention.query.delete()
     Timeslot.query.delete()
@@ -213,44 +220,56 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
             if first_row:
                 first_row = False
                 continue
-            else:
-                if row[5] not in tracks:
-                    # There is no corresponding track in CREM at this time.
-                    load_error = DataLoadError()
-                    load_error.error_level = 'Error'
-                    load_error.destination_table = 'event'
-                    load_error.line_num = csvreader.line_num
-                    load_error.error_msg = '%s is not a defined track; skipping this event' % row[5]
-                    load_error.error_dt = datetime.datetime.now()
-                    db.session.add(load_error)
-                    num_errors += 1
-                    continue
-                event = Event()
-                event.title = row[6]
-                event.description = row[8]
-                event.track = tracks[row[5]]
+            if len(row) < 11:
+                load_error = DataLoadError()
+                load_error.error_level = 'Error'
+                load_error.destination_table = 'event'
+                load_error.line_num = csvreader.line_num
+                load_error.error_msg = 'Not enough columns'
+                load_error.error_dt = datetime.datetime.now()
+                db.session.add(load_error)
+                num_errors += 1
+                continue
 
-                # Add timeslots and duration.
-                try:
-                    timeslots = get_timeslots(row[0], row[1], row[9],
-                                              convention, Timeslot)
-                    event.timeslots = timeslots
-                    event.duration = len(timeslots)
-                except Exception, e:
-                    load_error = DataLoadError()
-                    load_error.error_level = 'Error'
-                    load_error.destination_table = 'event'
-                    load_error.line_num = csvreader.line_num
-                    load_error.error_msg = str(e)
-                    load_error.error_dt = datetime.datetime.now()
-                    db.session.add(load_error)
-                    num_errors += 1
-                    continue
+            trackname = row[5].split(',')[0].strip()
+            if trackname not in tracks:
+                # There is no corresponding track in CREM at this time.
+                load_error = DataLoadError()
+                load_error.error_level = 'Error'
+                load_error.destination_table = 'event'
+                load_error.line_num = csvreader.line_num
+                load_error.error_msg = '%s is not a defined track; skipping this event' % row[5]
+                load_error.error_dt = datetime.datetime.now()
+                db.session.add(load_error)
+                num_errors += 1
+                continue
+            event = Event()
+            event.title = row[6]
+            event.description = row[8]
+            event.track = tracks[trackname]
 
-                event.failityRequest = row[10]
-                event.convention = convention
+            # Add timeslots and duration.
+            try:
+                timeslots = get_timeslots(row[0], row[1], row[9],
+                                          convention, Timeslot)
+                event.timeslots = timeslots
+                event.duration = len(timeslots)
+            except Exception, e:
+                load_error = DataLoadError()
+                load_error.error_level = 'Error'
+                load_error.destination_table = 'event'
+                load_error.line_num = csvreader.line_num
+                load_error.error_msg = str(e)
+                load_error.error_dt = datetime.datetime.now()
+                db.session.add(load_error)
+                num_errors += 1
+                continue
 
-                # Add room to the event.
+            event.facilityRequest = row[10]
+            event.convention = convention
+
+            # Add room to the event.
+            if row[4].strip():
                 if row[4] not in rooms:
                     # This is not a predefined room, so add it.
                     load_error = DataLoadError()
@@ -270,25 +289,24 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
                     db.session.add(room)
                 else:
                     room = rooms[row[4]]
+                event.rooms.append(room)
 
-                event.rooms = [room]
+            # Add presenters.
+            if row[7].strip():
+                presenter_names = row[7].split(',')
+                presenter_names = map(lambda s: s.strip(), presenter_names)
+                for presenter_name in presenter_names:
+                    if presenter_name in presenters:
+                        presenter = presenters[presenter_name]
+                    else:
+                        last_name = presenter_name.split(' ')[-1].strip()
+                        first_name = ' '.join(presenter_name.split(' ')[0:-1]).strip()
+                        presenter = Presenter(first_name, last_name)
+                        presenters[presenter_name] = presenter
+                        db.session.add(presenter)
+                    event.presenters.append(presenter)
 
-                # Add presenters.
-                if row[7].strip():
-                    presenter_names = row[7].split(',')
-                    presenter_names = map(lambda s: s.strip(), presenter_names)
-                    for presenter_name in presenter_names:
-                        if presenter_name in presenters:
-                            presenter = presenters[presenter_name]
-                        else:
-                            last_name = presenter_name.split(' ')[-1].strip()
-                            first_name = ' '.join(presenter_name.split(' ')[0:-1]).strip()
-                            presenter = Presenter(first_name, last_name)
-                            presenters[presenter_name] = presenter
-                            db.session.add(presenter)
-                        event.presenters.append(presenter)
-
-                db.session.add(event)
+            db.session.add(event)
 
     # Commit the data to the database.
     db.session.commit()
