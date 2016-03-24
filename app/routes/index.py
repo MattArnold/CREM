@@ -238,6 +238,15 @@ def refresh_database():
     url = request.data.strip()
     if not url:
         return ('The URL for schedule document was not specified', 500)
+
+    # Make sure the URL has the right suffix to export in CSV form.
+    if not url.lower().endswith('/pub?output=csv'):
+        if url.lower().endswith('/export?format=csv'):
+            url = url[:-18] + '/pub?output=csv'
+        elif url.endswith('/'):
+            url += 'pub?output=csv'
+        else:
+            url += '/pub?output=csv'
     try:
         result = urllib.urlretrieve(url)
     except Exception, e:
