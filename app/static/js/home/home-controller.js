@@ -18,12 +18,13 @@ angular.module('CREM')
         $scope.tracks[track.uid] = {};
         $scope.tracks[track.uid].uid = track.uid;
         $scope.tracks[track.uid].name = track.name;
-        $scope.tracks[track.uid].visible = false;
+        $scope.tracks[track.uid].visible = true;
       });
       // TODO: When implementing authentication, set up this line to show the
       // track uid which comes before the @ in the user's penguicon.org email
       // address which is also the user's login id.
-      $scope.tracks.tech.visible = true;
+      
+      // $scope.tracks.tech.visible = true;
     });
 
     columnsResponsePromise.success(function(data) {
