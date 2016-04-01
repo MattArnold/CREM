@@ -17,11 +17,14 @@ import refresh_data
 
 
 # Set up logging.
-if app.debug:
+if not app.debug:
     filehandler = logging.handlers.RotatingFileHandler('crem.log',
                                                        'a', 100000, 10)
-    filehandler.setLevel(logging.WARNING)
+    filehandler.setLevel(logging.INFO)
+    filehandler.setFormatter(logging.Formatter(
+        '%(asctime)s %(process)-6s %(levelname)-8s: %(funcName)s: %(message)s'))
     app.logger.addHandler(filehandler)
+    app.logger.setLevel(logging.INFO)
 
 
 def jsdate2py(s):
@@ -238,10 +241,10 @@ def refresh_database():
     # Export the schedule in CSV format.
     url = request.data.strip()
     if not url:
-        logging.info('No URL specified')
+        app.logger.info('No URL specified')
         return ('The URL for schedule document was not specified', 500)
     else:
-        logging.info('The user specified the URL %s' % url)
+        app.logger.info('The user specified the URL %s' % url)
 
     # Make sure the URL has the right suffix to export in CSV form.
     urlparts = urlparse.urlparse(url)
@@ -252,7 +255,7 @@ def refresh_database():
         path = path[:-1]
     newurl = '%s://%s%s/pub?output=csv' % (urlparts.scheme, urlparts.netloc,
                                            path)
-    logging.info('The new URL is %s' % newurl)
+    app.logger.info('The new URL is %s' % newurl)
 
     try:
         result = urllib.urlretrieve(newurl)
