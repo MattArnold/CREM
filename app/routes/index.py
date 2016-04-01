@@ -18,8 +18,9 @@ import refresh_data
 
 # Set up logging.
 if not app.debug:
-    filehandler = logging.handlers.RotatingFileHandler('crem.log',
-                                                       'a', 100000, 10)
+    filehandler = logging.handlers.RotatingFileHandler(
+        os.path.join(app.config['APP_ROOT'], 'crem.log'), 'a', 100000, 10
+    )
     filehandler.setLevel(logging.INFO)
     filehandler.setFormatter(logging.Formatter(
         '%(asctime)s %(process)-6s %(levelname)-8s: %(funcName)s: %(message)s'))
