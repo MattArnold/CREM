@@ -11,16 +11,21 @@ import urllib
 import os
 import logging
 from logging.handlers import RotatingFileHandler
+import urlparse
 
 import refresh_data
 
 
 # Set up logging.
-if app.debug:
-    filehandler = logging.handlers.RotatingFileHandler('crem.log',
-                                                       'a', 100000, 10)
-    filehandler.setLevel(logging.WARNING)
+if not app.debug:
+    filehandler = logging.handlers.RotatingFileHandler(
+        os.path.join(app.config['APP_ROOT'], 'crem.log'), 'a', 100000, 10
+    )
+    filehandler.setLevel(logging.INFO)
+    filehandler.setFormatter(logging.Formatter(
+        '%(asctime)s %(process)-6s %(levelname)-8s: %(funcName)s: %(message)s'))
     app.logger.addHandler(filehandler)
+    app.logger.setLevel(logging.INFO)
 
 
 def jsdate2py(s):
@@ -237,18 +242,24 @@ def refresh_database():
     # Export the schedule in CSV format.
     url = request.data.strip()
     if not url:
+        app.logger.info('No URL specified')
         return ('The URL for schedule document was not specified', 500)
+    else:
+        app.logger.info('The user specified the URL %s' % url)
 
     # Make sure the URL has the right suffix to export in CSV form.
-    if not url.lower().endswith('/pub?output=csv'):
-        if url.lower().endswith('/export?format=csv'):
-            url = url[:-18] + '/pub?output=csv'
-        elif url.endswith('/'):
-            url += 'pub?output=csv'
-        else:
-            url += '/pub?output=csv'
+    urlparts = urlparse.urlparse(url)
+    path = urlparts.path
+    if path.lower().endswith('/pub'):
+        path = path[:-4]
+    elif path.endswith('/'):
+        path = path[:-1]
+    newurl = '%s://%s%s/pub?output=csv' % (urlparts.scheme, urlparts.netloc,
+                                           path)
+    app.logger.info('The new URL is %s' % newurl)
+
     try:
-        result = urllib.urlretrieve(url)
+        result = urllib.urlretrieve(newurl)
     except Exception, e:
         return ('Unable to read the schedule document: %s' % e, 500)
 
