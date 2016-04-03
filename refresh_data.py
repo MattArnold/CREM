@@ -124,19 +124,23 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
 
     # The track name and the email address for each CREM track.
     track_infos = (
-        ('Literature', 'literature@penguicon.org'),
-        ('Tech', 'tech@penguicon.org'),
-        ('After Dark', 'afterdark@penguicon.org'),
-        ('Action Adventure', 'action@penguicon.org'),
-        ('Costuming', 'costuming@penguicon.org'),
-        ('Web Comics', 'webcomics@penguicon.org'),
-        ('Gaming', 'gaming@penguicon.org'),
-        ('D.I.Y.', 'diy@penguicon.org'),
-        ('Film', 'film@penguicon.org'),
-        ('Food', 'food@penguicon.org'),
-        ('Video Gaming', 'videogaming@penguicon.org'),
-        ('Science', 'science@penguicon.org'),
-        ('Eco', 'eco@penguicon.org'),
+      ('Literature', 'literature@penguicon.org'),
+      ('Tech', 'tech@penguicon.org'),
+      ('After Dark', 'afterdark@penguicon.org'),
+      ('Action Adventure', 'action@penguicon.org'),
+      ('Costuming', 'costuming@penguicon.org'),
+      ('Comics', 'webcomics@penguicon.org'),
+      ('Gaming', 'gaming@penguicon.org'),
+      ('DIY', 'diy@penguicon.org'),
+      ('Film', 'film@penguicon.org'),
+      ('Food', 'food@penguicon.org'),
+      ('Video Gaming', 'videogaming@penguicon.org'),
+      ('Science', 'science@penguicon.org'),
+      ('Media', 'media@penguicon.org'),
+      ('Mayhem', 'mayhem@penguicon.org'),
+      ('Anime', 'anime@penguicon.org'),
+      ('Penguicon', 'penguicon@penguicon.org'),
+      ('Life', 'life@penguicon.org'),
     )
 
     # Create tracks and save database objects in dictionary for later reference.
@@ -216,7 +220,10 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
     with open(sched_info_fname, 'rb') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
         first_row = True
+        rownumber = 0
         for row in csvreader:
+            rownumber++
+
             if first_row:
                 first_row = False
                 continue
@@ -225,20 +232,20 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
                 load_error.error_level = 'Error'
                 load_error.destination_table = 'event'
                 load_error.line_num = csvreader.line_num
-                load_error.error_msg = 'Not enough columns'
+                load_error.error_msg = 'Not enough columns in row ' + rownumber
                 load_error.error_dt = datetime.datetime.now()
                 db.session.add(load_error)
                 num_errors += 1
                 continue
 
-            trackname = row[5].split(',')[0].strip()
+            trackname = row[5].split(', ')[0].strip()
             if trackname not in tracks:
                 # There is no corresponding track in CREM at this time.
                 load_error = DataLoadError()
                 load_error.error_level = 'Error'
                 load_error.destination_table = 'event'
                 load_error.line_num = csvreader.line_num
-                load_error.error_msg = '%s is not a defined track; skipping this event' % row[5]
+                load_error.error_msg = '%s is not a defined track; skipping this event in row ' + rownumber % row[5]
                 load_error.error_dt = datetime.datetime.now()
                 db.session.add(load_error)
                 num_errors += 1
