@@ -220,10 +220,7 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
     with open(sched_info_fname, 'rb') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
         first_row = True
-        rownumber = 0
         for row in csvreader:
-            rownumber++
-
             if first_row:
                 first_row = False
                 continue
@@ -232,7 +229,7 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
                 load_error.error_level = 'Error'
                 load_error.destination_table = 'event'
                 load_error.line_num = csvreader.line_num
-                load_error.error_msg = 'Not enough columns in row ' + rownumber
+                load_error.error_msg = 'Not enough columns in row %d' % csvreader.line_num
                 load_error.error_dt = datetime.datetime.now()
                 db.session.add(load_error)
                 num_errors += 1
@@ -245,7 +242,7 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
                 load_error.error_level = 'Error'
                 load_error.destination_table = 'event'
                 load_error.line_num = csvreader.line_num
-                load_error.error_msg = '%s is not a defined track; skipping this event in row ' + rownumber % row[5]
+                load_error.error_msg = '%s is not a defined track; skipping this event in row %d' % (row[5], csvreader.line_num)
                 load_error.error_dt = datetime.datetime.now()
                 db.session.add(load_error)
                 num_errors += 1
