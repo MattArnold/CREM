@@ -235,7 +235,7 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
                 num_errors += 1
                 continue
 
-            trackname = row[5].split(', ')[0].strip()
+            trackname = row[5].split(',')[0].strip()
             if trackname not in tracks:
                 # There is no corresponding track, so add it.
                 email = '-'.join(trackname.lower().split()) + '-added@penguicon.org'
@@ -247,7 +247,7 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
                 load_error.error_level = 'Warning'
                 load_error.destination_table = 'event'
                 load_error.line_num = csvreader.line_num
-                load_error.error_msg = '%s is not a defined track; adding it' % row[5]
+                load_error.error_msg = '%s is not a defined track; adding it' % trackname
                 load_error.error_dt = datetime.datetime.now()
                 db.session.add(load_error)
                 num_errors += 1
