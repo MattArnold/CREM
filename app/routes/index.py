@@ -1,20 +1,27 @@
-from app import app
-from app import db
-from app.models import Convention, Event, Track, Room, RoomGroup, Timeslot, DataLoadError
-from flask import jsonify, request, render_template, url_for, redirect
-import json
-from sqlalchemy.orm.exc import MultipleResultsFound
-from sqlalchemy.exc import SQLAlchemyError
-import datetime
-from collections import defaultdict
+import bcrypt
+import binascii
 import urllib
 import os
 import logging
 from logging.handlers import RotatingFileHandler
 import urlparse
+import json
+import datetime
+from collections import defaultdict
+
+from app import app
+from app import db
+from app.models import Convention, Event, Track, Room, RoomGroup, Timeslot, DataLoadError
+from app.models import User
+from flask import jsonify, request, render_template, url_for, redirect, session, abort
+from flask.ext.login import LoginManager, login_required
+from flask.ext.login import login_user, logout_user, current_user
+from wtforms import Form, StringField
+from wtforms.validators import DataRequired
+from sqlalchemy.orm.exc import MultipleResultsFound
+from sqlalchemy.exc import SQLAlchemyError
 
 import refresh_data
-
 
 # Set up logging.
 if not app.debug:
@@ -29,6 +36,37 @@ if not app.debug:
         '%(asctime)s %(process)-6s %(levelname)-8s: %(funcName)s: %(message)s'))
     app.logger.addHandler(filehandler)
     app.logger.setLevel(logging.INFO)
+
+
+def generate_csrf_token():
+    """
+    Generate a CSRF token that can be included in forms, and checked in
+    methodes which accept POST data.
+    """
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = binascii.hexlify(os.urandom(24))
+    return session['_csrf_token']
+
+app.jinja_env.globals['csrf_token'] = generate_csrf_token
+
+
+# Setup security.
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def user_loader(user_id):
+    try:
+        return User.query.get(user_id)
+    except SQLAlchemyError, e:
+        app.logger.error('Unable to query for user in user_loader(): %s' % e)
+        abort(500)
+
+
+class LoginForm(Form):
+    username = StringField('username', validators=[DataRequired()])
+    password = StringField('password', validators=[DataRequired()])
 
 
 def jsdate2py(s):
@@ -49,13 +87,11 @@ def jsdate2py(s):
         return None
     return datetime.datetime(year, month, day, hour, 0, 0)
 
+
 @app.route('/')
 def root():
     return app.send_static_file('index.html')
 
-@app.route('/admin')
-def adminPage():
-    return app.send_static_file('/views/admin.html')
 
 @app.route('/convention.json', methods=['GET', 'POST'])
 def convention():
@@ -241,6 +277,7 @@ def combined_info():
 
 
 @app.route('/refresh-database', methods=['POST'])
+@login_required
 def refresh_database():
     # Export the schedule in CSV format.
     url = request.data.strip()
@@ -280,7 +317,54 @@ def refresh_database():
 
 
 @app.route('/show-database-errors')
+@login_required
 def show_database_errors():
     # Display errors and warnings that occurred when refreshing the database.
     load_errors = DataLoadError.query.order_by(DataLoadError.line_num).all()
     return render_template('load_errors.html', load_errors=load_errors)
+
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    error = None
+    form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate():
+        # Check the CSRF token.
+        token = session.pop('_csrf_token', None)
+        if not token or token != request.form.get('_csrf_token'):
+            abort(403)
+
+        try:
+            user = User.query.get(form.username.data)
+        except SQLAlchemyError, e:
+            app.logger.error('Unable to query for user in login(): %s' % e)
+            abort(500)
+        password = form.password.data
+        if user and bcrypt.hashpw(password.encode('utf-8'), user.encpwd.encode('utf-8')).decode() == user.encpwd:
+            user.authenticated = True
+            db.session.add(user)
+            try:
+                db.session.commit()
+            except SQLAlchemyError, e:
+                app.logger.error('Unable to commit user authentication in login(): %s' % e)
+                abort(500)
+            login_user(user, remember=True)
+            return redirect('/')
+        else:
+            error = 'the user name or password are incorrect.'
+    return render_template('login.html', form=form, error=error)
+
+
+@app.route('/logout/', methods=["GET"])
+def logout():
+    user = current_user
+    if user.get_id():
+        user.authenticated = False
+        db.session.add(user)
+        try:
+            db.session.commit()
+        except SQLAlchemyError, e:
+            app.logger.error('Unable to commit user authentication in logout(): %s' % e)
+            abort(500)
+        logout_user()
+    return redirect('/')

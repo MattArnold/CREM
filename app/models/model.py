@@ -312,3 +312,27 @@ class DataLoadError(db.Model):
     line_num = db.Column(db.Integer)
     error_msg = db.Column(db.String(50))
     error_dt = db.Column(db.DateTime)
+
+
+class User(db.Model):
+    __tablename__ = 'app_user'
+
+    username = db.Column(db.String(100), primary_key=True)
+    encpwd = db.Column(db.String(100))
+    authenticated = db.Column(db.Boolean, default=False)
+
+    def is_active(self):
+        """True, as all users are active."""
+        return True
+
+    def get_id(self):
+        """Return the email address to satisfy Flask-Login's requirements."""
+        return self.username
+
+    def is_authenticated(self):
+        """Return True if the user is authenticated."""
+        return self.authenticated
+
+    def is_anonymous(self):
+        """False, as anonymous users aren't supported."""
+        return False
