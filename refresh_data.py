@@ -237,12 +237,17 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
 
             trackname = row[5].split(', ')[0].strip()
             if trackname not in tracks:
-                # There is no corresponding track in CREM at this time.
+                # There is no corresponding track, so add it.
+                email = '-'.join(trackname.lower().split()) + '-added@penguicon.org'
+                track = Track(trackname, email)
+                tracks[trackname] = track
+                db.session.add(track)
+
                 load_error = DataLoadError()
-                load_error.error_level = 'Error'
+                load_error.error_level = 'Warning'
                 load_error.destination_table = 'event'
                 load_error.line_num = csvreader.line_num
-                load_error.error_msg = '%s is not a defined track; skipping this event in row %d' % (row[5], csvreader.line_num)
+                load_error.error_msg = '%s is not a defined track; adding it' % row[5]
                 load_error.error_dt = datetime.datetime.now()
                 db.session.add(load_error)
                 num_errors += 1
