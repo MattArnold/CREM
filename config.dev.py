@@ -15,6 +15,5 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 APP_ROOT = basedir
-SECRET_KEY = 'e\x94N8\x05l\x91\xb8\xca\xca\xd0\xdf\x8bw\xff\x01J[\xea\xac%\x8e6\xcd'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
