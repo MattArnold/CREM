@@ -37,7 +37,7 @@ angular.module('CREM')
         $scope.columns[columnid].order = i;
       });
       // These columns are hidden by default:
-      _.each(['eventnumber','type','resources','duration','comments'], function(columnid){
+      _.each(['eventnumber','type','resources','duration','comments', 'conflict'], function(columnid){
         $scope.columns[columnid].visible = false;
       });
       setColumnWidths();
