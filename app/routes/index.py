@@ -69,6 +69,10 @@ class LoginForm(Form):
     password = StringField('password', validators=[DataRequired()])
 
 
+class ImportForm(Form):
+    source_url = StringField('source_url', validators=[DataRequired()])
+
+
 def jsdate2py(s):
     """
     Converts a string to a Python datetime object. Returns None if the string
@@ -276,44 +280,48 @@ def combined_info():
     )
 
 
-@app.route('/refresh-database', methods=['POST'])
+@app.route('/refresh-database', methods=['GET', 'POST'])
 @login_required
 def refresh_database():
-    # Export the schedule in CSV format.
-    url = request.data.strip()
-    if not url:
-        app.logger.info('No URL specified')
-        return ('The URL for schedule document was not specified', 500)
-    else:
-        app.logger.info('The user specified the URL %s' % url)
+    error = None
+    form = ImportForm(request.form)
+    if request.method == 'POST' and form.validate():
+        # Check the CSRF token.
+        token = session.pop('_csrf_token', None)
+        if not token or token != request.form.get('_csrf_token'):
+            abort(403)
 
-    # Make sure the URL has the right suffix to export in CSV form.
-    urlparts = urlparse.urlparse(url)
-    path = urlparts.path
-    if path.lower().endswith('/pub'):
-        path = path[:-4]
-    elif path.endswith('/'):
-        path = path[:-1]
-    newurl = '%s://%s%s/pub?output=csv' % (urlparts.scheme, urlparts.netloc,
-                                           path)
-    app.logger.info('The new URL is %s' % newurl)
+        url = form.source_url.data.strip()
+        if not url:
+            app.logger.info('No URL specified')
+            error = 'The URL for schedule document was not specified'
+        else:
+            app.logger.info('The user specified the URL %s' % url)
 
-    try:
-        result = urllib.urlretrieve(newurl)
-    except Exception, e:
-        return ('Unable to read the schedule document: %s' % e, 500)
+            # Make sure the URL has the right suffix to export in CSV form.
+            urlparts = urlparse.urlparse(url)
+            path = urlparts.path
+            if path.lower().endswith('/pub'):
+                path = path[:-4]
+            elif path.endswith('/'):
+                path = path[:-1]
+            newurl = '%s://%s%s/pub?output=csv' % (urlparts.scheme, urlparts.netloc,
+                                                   path)
+            app.logger.info('The new URL is %s' % newurl)
 
-    # Refresh the database and delete the temporary export file.
-    fname = result[0]
-    num_errors, num_warnings = refresh_data.refresh_data(fname)
-    os.remove(fname)
+            try:
+                result = urllib.urlretrieve(newurl)
+            except Exception, e:
+                error = 'Unable to read the schedule document: %s' % e
+            else:
+                # Refresh the database and delete the temporary export file.
+                fname = result[0]
+                refresh_data.refresh_data(fname)
+                os.remove(fname)
 
-    # Indicate in the HTTP result if any errors or warnings occurred.
-    if num_errors == 0 and num_warnings == 0:
-        return ('Success: all records were loaded', 200)
-    else:
-        return ('Errors: there were %d errors and %d warnings' %
-                (num_errors, num_errors), 200)
+                # Show any errors which occurred.
+                return redirect('/show-database-errors')
+    return render_template('refresh_database.html', form=form, error=error)
 
 
 @app.route('/show-database-errors')
