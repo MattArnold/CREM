@@ -33,6 +33,11 @@ performed once.
 
 This will do two things. First it will create a Python virtual environment called *venv* and install a version of Python in it.
 
+**Note:** one of the python packages installed is `bcrypt`, which requires the `libffi` system package. If you are running a debian-based distribution
+such as Ubuntu, you would install `libffi-dev` with the command:
+
+    sudo apt-get install libffi-dev
+
 The second thing will be to run `bower install` which will install a folder `app/static/lib` full of Javascript third-party dependencies.
 
 Avoid committing the two above directories, which are created by this process. Open `CREM/.git/info/exclude` which determines which files Git will ignore. Paste in this pattern:
