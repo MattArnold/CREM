@@ -2,6 +2,7 @@ venv/*
 app/static/lib/*
 config.py
 fabfile_env.py
+secretkeys.py
 
 .DS_Store
 *.db

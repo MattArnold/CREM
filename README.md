@@ -49,6 +49,10 @@ venv/
 
 We won't change the contents of third-party dependencies; instead we will only edit `bower.json` which determines which versions of dependencies we will use, managed by Bower.
 
+**If you install CREM in a production environment**, be sure to update the value
+of `SECRET_KEY` in `secretkeys.py`. (See the documentation in secretkeys.py
+for an explanation of how to do this.)
+
 ## Activating the Virtual Environment
 
 The steps below require that you activate the virtual environment.
