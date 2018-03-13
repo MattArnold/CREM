@@ -5,6 +5,7 @@ fabfile_env.py
 secretkeys.py
 
 .idea/*
+.vscode/*
 *.db
 *.pyc
 *.swp

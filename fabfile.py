@@ -10,7 +10,7 @@ env.hosts = fabfile_env.HOSTS
 
 
 def domain():
-    print fabfile_env.DOMAIN
+    print(fabfile_env.DOMAIN)
 
 
 def pull_changes():
@@ -33,7 +33,7 @@ def restart():
 
 
 def deploy():
-    print 'Deploying to %s' % fabfile_env.DOMAIN
+    print('Deploying to %s' % fabfile_env.DOMAIN)
     pull_changes()
     update_packages()
     restart()
