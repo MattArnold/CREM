@@ -15,11 +15,17 @@ def main():
             for user in users:
                 print('    %s' % user.username)
             print()
-            create = input('Create another user (y/n)? ')
+            if sys.version_info < (3,):
+                create = raw_input('Create another user (y/n)? ')
+            else:
+                create = input('Create another user (y/n)? ')
             if create.lower() == 'n':
                 return
 
-        username = input('Enter username: ')
+        if sys.version_info < (3,):
+            username = raw_input('Enter username: ')
+        else:
+            username = input('Enter username: ')
         password = getpass().encode('utf-8')
         assert password == getpass('Password (again): ').encode('utf-8')
 
