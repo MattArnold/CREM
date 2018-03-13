@@ -1,10 +1,14 @@
 import bcrypt
 import binascii
-import urllib
+try:
+    from urllib.request import urlretrieve
+    from urllib.parse import urlparse
+except ImportError:
+    from urllib import urlretrieve
+    from urlparse import urlparse
 import os
 import logging
 from logging.handlers import RotatingFileHandler
-import urlparse
 import json
 import datetime
 from collections import defaultdict
@@ -59,7 +63,7 @@ login_manager.init_app(app)
 def user_loader(user_id):
     try:
         return User.query.get(user_id)
-    except SQLAlchemyError, e:
+    except SQLAlchemyError as e:
         app.logger.error('Unable to query for user in user_loader(): %s' % e)
         abort(500)
 
@@ -126,7 +130,7 @@ def convention():
         try:
             db.session.add(convention)
             db.session.commit()
-        except SQLAlchemyError, e:
+        except SQLAlchemyError as e:
             return ('Error updating the convention record: %s' % e, 500)
         return ('Convention data successfully updated.', 200)
 
@@ -192,7 +196,7 @@ def events():
                 events_by_timeslot_and_room[key].append(event.id)
 
     # Annotate events with presenter conflicts
-    for key, event_ids in events_by_timeslot_and_presenter.items():
+    for key, event_ids in list(events_by_timeslot_and_presenter.items()):
         # If this timeslot & presenter appears in multiple events, all those
         # events are in conflict.
         if len(event_ids) > 1:
@@ -200,7 +204,7 @@ def events():
                 events_by_id[event_id]['conflict'] = "<div class='conflicticon'>&nbsp;Participant</div>"
 
     # Annotate events with room conflicts
-    for key, event_ids in events_by_timeslot_and_room.items():
+    for key, event_ids in list(events_by_timeslot_and_room.items()):
         # If this timeslot & room appears in multiple events, all those
         # events are in conflict.
         if len(event_ids) > 1:
@@ -210,7 +214,7 @@ def events():
                 else:
                     events_by_id[event_id]['conflict'] = "<div class='conflicticon'>&nbsp;Room</div>"
 
-    return jsonify(eventlist = events_by_id.values())
+    return jsonify(eventlist = list(events_by_id.values()))
 
 @app.route('/rooms.json', methods=['GET', 'POST'])
 def rooms():
@@ -233,7 +237,7 @@ def rooms():
         # Update the database.
         try:
             db.session.commit()
-        except SQLAlchemyError, e:
+        except SQLAlchemyError as e:
             return ('Error updating the room records: %s' % e, 500)
         return ('Room configs successfully updated.', 200)
 
@@ -299,7 +303,7 @@ def refresh_database():
             app.logger.info('The user specified the URL %s' % url)
 
             # Make sure the URL has the right suffix to export in CSV form.
-            urlparts = urlparse.urlparse(url)
+            urlparts = urlparse(url)
             path = urlparts.path
             if path.lower().endswith('/pub'):
                 path = path[:-4]
@@ -310,8 +314,8 @@ def refresh_database():
             app.logger.info('The new URL is %s' % newurl)
 
             try:
-                result = urllib.urlretrieve(newurl)
-            except Exception, e:
+                result = urlretrieve(newurl)
+            except Exception as e:
                 error = 'Unable to read the schedule document: %s' % e
             else:
                 # Refresh the database and delete the temporary export file.
@@ -344,7 +348,7 @@ def login():
 
         try:
             user = User.query.get(form.username.data)
-        except SQLAlchemyError, e:
+        except SQLAlchemyError as e:
             app.logger.error('Unable to query for user in login(): %s' % e)
             abort(500)
         password = form.password.data
@@ -353,7 +357,7 @@ def login():
             db.session.add(user)
             try:
                 db.session.commit()
-            except SQLAlchemyError, e:
+            except SQLAlchemyError as e:
                 app.logger.error('Unable to commit user authentication in login(): %s' % e)
                 abort(500)
             login_user(user, remember=True)
@@ -371,7 +375,7 @@ def logout():
         db.session.add(user)
         try:
             db.session.commit()
-        except SQLAlchemyError, e:
+        except SQLAlchemyError as e:
             app.logger.error('Unable to commit user authentication in logout(): %s' % e)
             abort(500)
         logout_user()

@@ -101,7 +101,10 @@ tuxtrax_tracks = {
 }
 
 # Read events from events file.
-events_file = open(os.path.join(script_dir, 'test_events.txt'), 'rb')
+if sys.version_info < (3,):
+    events_file = open(os.path.join(script_dir, 'test_events.txt'), 'rb')
+else:
+    events_file = open(os.path.join(script_dir, 'test_events.txt'), 'rt', encoding="utf-8")
 csvreader = csv.reader(events_file, delimiter='|', quotechar='"')
 first_row = True
 for row in csvreader:
@@ -116,7 +119,10 @@ for row in csvreader:
         continue
     event = Event()
     event.title = row[0]
-    event.description = unicode(row[1], 'utf8')
+    if sys.version_info < (3,):
+        event.description = unicode(row[1], 'utf8')
+    else:
+        event.description = row[1]
     event.track = db.session.query(Track).\
         filter(Track.name == track_name).first()
     event.duration = int(row[3])

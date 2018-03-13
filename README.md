@@ -1,7 +1,7 @@
 # CREM
-###Convention Resource Event Management
+### Convention Resource Event Management
 
-##Purpose
+## Purpose
 
 This web app will help a small team of convention organizers schedule a huge number of events for a highly-diverse multi-track convention, such as Penguicon, identifying all resource conflicts.
 
@@ -15,7 +15,7 @@ A database allowed us to store and present a schedule with all the details assoc
 
 We are creating C.R.E.M. because we need one solution which stores all the data we use, and also alerts us to conflicts.
 
-##Prerequisites
+## Prerequisites
 
 To develop for this project, you will need `node`, `grunt`, and `bower`. Download `node` from `https://nodejs.org/en/download/` and install it.
 
@@ -26,7 +26,7 @@ problems with subsequent steps in this procedure. To make sure that the `node` c
 `node --help`. You should see options for running `node`. If instead you see an error indicating that the command was not found, you will need
 to create a symbolic link from `node` to `nodejs`. (The steps to do this depend on your operating system.)
 
-##Installation
+## Installation
 
 In the project directory, execute `./install.sh` (on Mac or Linux), or `install.bat` (on Windows). This step only needs to be
 performed once.
@@ -39,13 +39,6 @@ such as Ubuntu, you would install `libffi-dev` with the command:
     sudo apt-get install libffi-dev
 
 The second thing will be to run `bower install` which will install a folder `app/static/lib` full of Javascript third-party dependencies.
-
-Avoid committing the two above directories, which are created by this process. Open `CREM/.git/info/exclude` which determines which files Git will ignore. Paste in this pattern:
-
-```
-app/static/lib/
-venv/
-```
 
 We won't change the contents of third-party dependencies; instead we will only edit `bower.json` which determines which versions of dependencies we will use, managed by Bower.
 
@@ -81,7 +74,7 @@ to the database with the command:
 
     python dev/add_testdata.py
 
-##Running the Application
+## Running the Application
 
 Activate the virtual environment as described above. Then start the
 application with the command:

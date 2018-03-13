@@ -47,7 +47,7 @@ def get_timeslots(start_date_str, start_time_str, duration_str,
     first_index = num_seconds_since_conv_start/num_timeslot_seconds
 
     # Add timeslots to the list.
-    timeslot_indexes = range(int(first_index), int(first_index) + int(num_timeslots))
+    timeslot_indexes = list(range(int(first_index), int(first_index) + int(num_timeslots)))
     for timeslot_index in timeslot_indexes:
         timeslot = Timeslot.query.filter_by(timeslot_index=timeslot_index).first()
         timeslots.append(timeslot)
@@ -261,7 +261,7 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
                                           convention, Timeslot)
                 event.timeslots = timeslots
                 event.duration = len(timeslots)
-            except Exception, e:
+            except Exception as e:
                 load_error = DataLoadError()
                 load_error.error_level = 'Error'
                 load_error.destination_table = 'event'
@@ -301,7 +301,7 @@ def refresh_data(sched_info_fname, convention_info_fname=None):
             # Add presenters.
             if row[7].strip():
                 presenter_names = row[7].split(',')
-                presenter_names = map(lambda s: s.strip(), presenter_names)
+                presenter_names = [s.strip() for s in presenter_names]
                 for presenter_name in presenter_names:
                     if presenter_name in presenters:
                         presenter = presenters[presenter_name]
